@@ -28,49 +28,62 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pb-28 bg-background">
-      {/* Header with gradient */}
-      <div className="gradient-green px-6 pt-14 pb-8 rounded-b-[2rem]">
-        <div className="flex items-center justify-between mb-1">
-          <h1 className="text-[28px] font-bold tracking-tight text-primary-foreground">有数</h1>
-          <div className="flex items-center gap-2">
-            <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm transition-shadow">
-              <Search size={18} strokeWidth={1.5} className="text-primary-foreground" />
-            </button>
-            <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm transition-shadow">
-              <SlidersHorizontal size={18} strokeWidth={1.5} className="text-primary-foreground" />
-            </button>
+      {/* Gradient background that fades out behind the summary card */}
+      <div className="relative">
+        <div
+          className="absolute inset-x-0 top-0 h-[300px] gradient-green"
+          style={{
+            maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+          }}
+        />
+
+        {/* Header */}
+        <div className="relative px-6 pt-14 pb-6">
+          <div className="flex items-center justify-between mb-1">
+            <h1 className="text-[28px] font-bold tracking-tight text-primary-foreground">有数</h1>
+            <div className="flex items-center gap-2">
+              <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm">
+                <Search size={18} strokeWidth={1.5} className="text-primary-foreground" />
+              </button>
+              <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm">
+                <SlidersHorizontal size={18} strokeWidth={1.5} className="text-primary-foreground" />
+              </button>
+            </div>
+          </div>
+          <p className="text-sm text-primary-foreground/80">管理你的每一件物品</p>
+        </div>
+
+        {/* Summary card */}
+        <div className="relative px-5">
+          <div className="rounded-2xl bg-card card-shadow p-5">
+            <div className="flex items-baseline justify-between mb-5">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">总资产</p>
+                <p className="text-[26px] font-bold text-foreground leading-none">
+                  ¥{total.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">日均成本</p>
+                <p className="text-[26px] font-bold text-foreground leading-none">¥{dailyCost.toFixed(2)}</p>
+              </div>
+            </div>
+
+            {/* Status summary */}
+            <div className="border-t border-border pt-4">
+              <div className="grid grid-cols-3 gap-4">
+                <StatusPill label="服役中" count={activeCount} total={totalCount} color="bg-primary" />
+                <StatusPill label="已退役" count={retiredCount} total={totalCount} color="bg-muted-foreground/40" />
+                <StatusPill label="已卖出" count={soldCount} total={totalCount} color="bg-muted-foreground/25" />
+              </div>
+            </div>
           </div>
         </div>
-        <p className="text-sm text-primary-foreground/80">管理你的每一件物品</p>
       </div>
 
-      <div className="px-5 mt-4">
-        {/* Summary card */}
-        <div className="rounded-2xl bg-card card-shadow p-5">
-          <div className="flex items-baseline justify-between mb-5">
-            <div>
-              <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">总资产</p>
-              <p className="text-[26px] font-bold text-foreground leading-none">
-                ¥{total.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">日均成本</p>
-              <p className="text-[26px] font-bold text-foreground leading-none">¥{dailyCost.toFixed(2)}</p>
-            </div>
-          </div>
-
-          {/* Status summary */}
-          <div className="border-t border-border pt-4">
-            <div className="grid grid-cols-3 gap-4">
-              <StatusPill label="服役中" count={activeCount} total={totalCount} color="bg-primary" />
-              <StatusPill label="已退役" count={retiredCount} total={totalCount} color="bg-muted-foreground/40" />
-              <StatusPill label="已卖出" count={soldCount} total={totalCount} color="bg-muted-foreground/25" />
-            </div>
-          </div>
-        </div>
-
-        {/* Filter pills - Airbnb horizontal scroll style */}
+      <div className="px-5">
+        {/* Filter pills */}
         <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {filters.map(f => (
             <button
