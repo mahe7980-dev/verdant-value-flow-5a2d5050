@@ -29,7 +29,7 @@ export default function AssetCard({ asset }: { asset: Asset }) {
       </div>
 
       <span className="font-semibold text-sm truncate text-foreground">{asset.name}</span>
-      <span className="text-[11px] text-muted-foreground mt-0.5">
+      <span className="text-[11px] text-muted-foreground mt-0.5 h-4 leading-4 truncate">
         ¥{asset.price.toLocaleString('zh-CN', { minimumFractionDigits: 2 })} | 已使用 {days} 天
       </span>
       <span className="text-base font-bold text-foreground mt-2">¥{daily.toFixed(2)}<span className="text-xs font-normal text-muted-foreground">/天</span></span>
