@@ -19,76 +19,78 @@ export default function AddAsset() {
   };
 
   return (
-    <div className="min-h-screen px-5 pt-12 pb-12">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-muted-foreground mb-6">
-        <ArrowLeft size={18} strokeWidth={1.5} />
-        <span className="text-sm">返回</span>
-      </button>
-
-      <h1 className="text-xl font-bold mb-6">添加资产</h1>
-
-      <div className="flex flex-col gap-4">
-        {/* Name */}
-        <div className="rounded-2xl bg-card card-shadow p-4">
-          <label className="text-xs text-muted-foreground mb-1 block">名称</label>
-          <input
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="例如：MacBook Pro"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
-          />
-        </div>
-
-        {/* Price */}
-        <div className="rounded-2xl bg-card card-shadow p-4">
-          <label className="text-xs text-muted-foreground mb-1 block">价格 (¥)</label>
-          <input
-            type="number"
-            value={price}
-            onChange={e => setPrice(e.target.value)}
-            placeholder="0.00"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
-          />
-        </div>
-
-        {/* Date */}
-        <div className="rounded-2xl bg-card card-shadow p-4">
-          <label className="text-xs text-muted-foreground mb-1 block">购买日期</label>
-          <input
-            type="date"
-            value={date}
-            onChange={e => setDate(e.target.value)}
-            className="w-full bg-transparent text-sm outline-none"
-          />
-        </div>
-
-        {/* Category */}
-        <div className="rounded-2xl bg-card card-shadow p-4">
-          <label className="text-xs text-muted-foreground mb-2 block">类别</label>
-          <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map(c => (
-              <button
-                key={c}
-                onClick={() => setCategory(c)}
-                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                  category === c
-                    ? 'gradient-green text-primary-foreground'
-                    : 'bg-secondary text-secondary-foreground'
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <button
-          onClick={handleSubmit}
-          disabled={!canSubmit}
-          className="mt-4 w-full rounded-2xl gradient-green py-3.5 text-sm font-semibold text-primary-foreground disabled:opacity-40 transition-opacity"
-        >
-          添加
+    <div className="min-h-screen bg-background">
+      <div className="px-6 pt-14 pb-12">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-foreground mb-6 group">
+          <ArrowLeft size={20} strokeWidth={1.5} className="transition-transform group-hover:-translate-x-0.5" />
+          <span className="text-sm font-medium">返回</span>
         </button>
+
+        <h1 className="text-[22px] font-bold mb-8 text-foreground">添加资产</h1>
+
+        <div className="flex flex-col gap-3">
+          {/* Name */}
+          <div className="rounded-2xl bg-card card-shadow p-4">
+            <label className="text-xs text-muted-foreground mb-1.5 block font-medium">名称</label>
+            <input
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="例如：MacBook Pro"
+              className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+            />
+          </div>
+
+          {/* Price */}
+          <div className="rounded-2xl bg-card card-shadow p-4">
+            <label className="text-xs text-muted-foreground mb-1.5 block font-medium">价格 (¥)</label>
+            <input
+              type="number"
+              value={price}
+              onChange={e => setPrice(e.target.value)}
+              placeholder="0.00"
+              className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+            />
+          </div>
+
+          {/* Date */}
+          <div className="rounded-2xl bg-card card-shadow p-4">
+            <label className="text-xs text-muted-foreground mb-1.5 block font-medium">购买日期</label>
+            <input
+              type="date"
+              value={date}
+              onChange={e => setDate(e.target.value)}
+              className="w-full bg-transparent text-sm text-foreground outline-none"
+            />
+          </div>
+
+          {/* Category */}
+          <div className="rounded-2xl bg-card card-shadow p-4">
+            <label className="text-xs text-muted-foreground mb-2.5 block font-medium">类别</label>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map(c => (
+                <button
+                  key={c}
+                  onClick={() => setCategory(c)}
+                  className={`rounded-full px-4 py-2 text-xs font-medium border transition-all ${
+                    category === c
+                      ? 'bg-foreground text-background border-foreground'
+                      : 'bg-background text-foreground border-border hover:border-foreground/30'
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            className="mt-6 w-full rounded-2xl bg-foreground text-background py-4 text-sm font-semibold disabled:opacity-30 transition-all active:scale-[0.98]"
+          >
+            添加资产
+          </button>
+        </div>
       </div>
     </div>
   );
