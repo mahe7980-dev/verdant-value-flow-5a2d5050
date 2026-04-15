@@ -28,23 +28,25 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pb-28 bg-background">
-      {/* Header with gradient */}
-      <div className="gradient-green px-6 pt-14 pb-8 rounded-b-[2rem]">
-        <div className="flex items-center justify-between mb-1">
-          <h1 className="text-[28px] font-bold tracking-tight text-primary-foreground">有数</h1>
-          <div className="flex items-center gap-2">
-            <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm transition-shadow">
-              <Search size={18} strokeWidth={1.5} className="text-primary-foreground" />
-            </button>
-            <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm transition-shadow">
-              <SlidersHorizontal size={18} strokeWidth={1.5} className="text-primary-foreground" />
-            </button>
+      {/* Header with gradient extending behind summary card */}
+      <div className="relative">
+        <div className="absolute inset-x-0 top-0 h-[280px] gradient-green" style={{ maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)' }} />
+        <div className="relative px-6 pt-14 pb-6">
+          <div className="flex items-center justify-between mb-1">
+            <h1 className="text-[28px] font-bold tracking-tight text-primary-foreground">有数</h1>
+            <div className="flex items-center gap-2">
+              <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm">
+                <Search size={18} strokeWidth={1.5} className="text-primary-foreground" />
+              </button>
+              <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm">
+                <SlidersHorizontal size={18} strokeWidth={1.5} className="text-primary-foreground" />
+              </button>
+            </div>
           </div>
+          <p className="text-sm text-primary-foreground/80">管理你的每一件物品</p>
         </div>
-        <p className="text-sm text-primary-foreground/80">管理你的每一件物品</p>
-      </div>
 
-      <div className="px-5 mt-4">
+        <div className="relative px-5">
         {/* Summary card */}
         <div className="rounded-2xl bg-card card-shadow p-5">
           <div className="flex items-baseline justify-between mb-5">
