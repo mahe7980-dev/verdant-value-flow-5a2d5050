@@ -28,20 +28,20 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pb-28 bg-background">
-      {/* Header */}
-      <div className="px-6 pt-14 pb-2">
+      {/* Header with gradient */}
+      <div className="gradient-green px-6 pt-14 pb-8 rounded-b-[2rem]">
         <div className="flex items-center justify-between mb-1">
-          <h1 className="text-[28px] font-bold tracking-tight text-foreground">有数</h1>
+          <h1 className="text-[28px] font-bold tracking-tight text-primary-foreground">有数</h1>
           <div className="flex items-center gap-2">
-            <button className="h-10 w-10 flex items-center justify-center rounded-full border border-border bg-background transition-shadow hover:card-shadow-hover">
-              <Search size={18} strokeWidth={1.5} className="text-foreground" />
+            <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm transition-shadow">
+              <Search size={18} strokeWidth={1.5} className="text-primary-foreground" />
             </button>
-            <button className="h-10 w-10 flex items-center justify-center rounded-full border border-border bg-background transition-shadow hover:card-shadow-hover">
-              <SlidersHorizontal size={18} strokeWidth={1.5} className="text-foreground" />
+            <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm transition-shadow">
+              <SlidersHorizontal size={18} strokeWidth={1.5} className="text-primary-foreground" />
             </button>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">管理你的每一件物品</p>
+        <p className="text-sm text-primary-foreground/80">管理你的每一件物品</p>
       </div>
 
       <div className="px-5 mt-4">
