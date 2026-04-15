@@ -77,6 +77,44 @@ export function getDepreciationCurve(price: number, maxDays: number) {
 
 export const CATEGORIES = ['电子产品', '家具', '交通工具', '服饰', '运动', '其他'];
 
+export const CATEGORY_EMOJI: Record<string, string> = {
+  '电子产品': '📱',
+  '家具': '🪑',
+  '交通工具': '🚗',
+  '服饰': '👔',
+  '运动': '⚽',
+  '其他': '📦',
+};
+
+// More specific emoji based on asset name keywords
+const PRODUCT_EMOJI_RULES: [RegExp, string][] = [
+  [/macbook|笔记本|laptop/i, '💻'],
+  [/iphone|手机|phone|pixel/i, '📱'],
+  [/ipad|平板|tablet/i, '📱'],
+  [/airpods|耳机|headphone|wh-1000|buds/i, '🎧'],
+  [/watch|手表/i, '⌚'],
+  [/键盘|keyboard/i, '⌨️'],
+  [/鼠标|mouse/i, '🖱️'],
+  [/显示器|monitor|display/i, '🖥️'],
+  [/相机|camera|sony a|canon|nikon/i, '📷'],
+  [/switch|ps5|xbox|游戏/i, '🎮'],
+  [/电视|tv/i, '📺'],
+  [/音箱|speaker|homepod/i, '🔊'],
+  [/充电|charger|电源/i, '🔌'],
+  [/背包|包/i, '🎒'],
+  [/自行车|单车|bike/i, '🚲'],
+  [/椅|座椅|chair/i, '🪑'],
+  [/桌|desk/i, '🪵'],
+  [/鞋|shoe|sneaker/i, '👟'],
+];
+
+export function getAssetEmoji(name: string, category: string): string {
+  for (const [pattern, emoji] of PRODUCT_EMOJI_RULES) {
+    if (pattern.test(name)) return emoji;
+  }
+  return CATEGORY_EMOJI[category] || '📦';
+}
+
 export const STATUS_LABELS: Record<AssetStatus, string> = {
   active: '服役中',
   retired: '已退役',
