@@ -71,7 +71,9 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+      </div>
 
+      <div className="px-5">
         {/* Filter pills - Airbnb horizontal scroll style */}
         <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {filters.map(f => (
