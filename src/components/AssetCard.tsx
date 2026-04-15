@@ -1,40 +1,44 @@
 import { Package } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Asset, getDaysUsed, getDailyCost } from '@/lib/assets';
+import { Asset, getDaysUsed, getDailyCost, STATUS_LABELS } from '@/lib/assets';
+
+const STATUS_DOT: Record<string, string> = {
+  active: 'bg-green-500',
+  retired: 'bg-muted-foreground',
+  sold: 'bg-orange-400',
+};
 
 export default function AssetCard({ asset }: { asset: Asset }) {
   const navigate = useNavigate();
   const days = getDaysUsed(asset.purchaseDate);
   const daily = getDailyCost(asset.price, asset.purchaseDate);
-  // Progress: after 365 days = 100%
-  const progress = Math.min(1, days / 365);
 
   return (
     <button
       onClick={() => navigate(`/asset/${asset.id}`)}
-      className="w-full rounded-2xl bg-card card-shadow p-4 text-left card-press"
+      className="w-full rounded-2xl bg-card card-shadow p-4 text-left card-press flex flex-col"
     >
-      <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent">
-          <Package size={20} className="text-accent-foreground" strokeWidth={1.5} />
+      {/* Top row: icon + status badge */}
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent">
+          <Package size={22} className="text-accent-foreground" strokeWidth={1.5} />
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between">
-            <span className="font-semibold text-sm truncate">{asset.name}</span>
-            <span className="text-xs text-muted-foreground">{days}天</span>
-          </div>
-          <div className="mt-1 flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">日均</span>
-            <span className="text-sm font-bold text-primary">¥{daily.toFixed(2)}</span>
-          </div>
-          <div className="mt-2 h-1.5 w-full rounded-full bg-accent overflow-hidden">
-            <div
-              className="h-full rounded-full gradient-green transition-all duration-500"
-              style={{ width: `${progress * 100}%` }}
-            />
-          </div>
-        </div>
+        <span className="flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5">
+          <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[asset.status] || 'bg-muted-foreground'}`} />
+          <span className="text-[10px] font-medium text-muted-foreground">{STATUS_LABELS[asset.status]}</span>
+        </span>
       </div>
+
+      {/* Name */}
+      <span className="font-semibold text-sm truncate text-foreground">{asset.name}</span>
+
+      {/* Price & days */}
+      <span className="text-[11px] text-muted-foreground mt-0.5">
+        ¥{asset.price.toLocaleString('zh-CN', { minimumFractionDigits: 2 })} | 已使用 {days} 天
+      </span>
+
+      {/* Daily cost */}
+      <span className="text-base font-bold text-foreground mt-2">¥{daily.toFixed(2)}<span className="text-xs font-normal text-muted-foreground">/天</span></span>
     </button>
   );
 }
