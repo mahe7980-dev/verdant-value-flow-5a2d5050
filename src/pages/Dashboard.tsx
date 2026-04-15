@@ -28,9 +28,17 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pb-28 bg-background">
-      {/* Header with gradient extending behind summary card */}
+      {/* Gradient background that fades out behind the summary card */}
       <div className="relative">
-        <div className="absolute inset-x-0 top-0 h-[280px] gradient-green" style={{ maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)' }} />
+        <div
+          className="absolute inset-x-0 top-0 h-[300px] gradient-green"
+          style={{
+            maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+          }}
+        />
+
+        {/* Header */}
         <div className="relative px-6 pt-14 pb-6">
           <div className="flex items-center justify-between mb-1">
             <h1 className="text-[28px] font-bold tracking-tight text-primary-foreground">有数</h1>
@@ -46,35 +54,36 @@ export default function Dashboard() {
           <p className="text-sm text-primary-foreground/80">管理你的每一件物品</p>
         </div>
 
-        <div className="relative px-5">
         {/* Summary card */}
-        <div className="rounded-2xl bg-card card-shadow p-5">
-          <div className="flex items-baseline justify-between mb-5">
-            <div>
-              <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">总资产</p>
-              <p className="text-[26px] font-bold text-foreground leading-none">
-                ¥{total.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
-              </p>
+        <div className="relative px-5">
+          <div className="rounded-2xl bg-card card-shadow p-5">
+            <div className="flex items-baseline justify-between mb-5">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">总资产</p>
+                <p className="text-[26px] font-bold text-foreground leading-none">
+                  ¥{total.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">日均成本</p>
+                <p className="text-[26px] font-bold text-foreground leading-none">¥{dailyCost.toFixed(2)}</p>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">日均成本</p>
-              <p className="text-[26px] font-bold text-foreground leading-none">¥{dailyCost.toFixed(2)}</p>
-            </div>
-          </div>
 
-          {/* Status summary */}
-          <div className="border-t border-border pt-4">
-            <div className="grid grid-cols-3 gap-4">
-              <StatusPill label="服役中" count={activeCount} total={totalCount} color="bg-primary" />
-              <StatusPill label="已退役" count={retiredCount} total={totalCount} color="bg-muted-foreground/40" />
-              <StatusPill label="已卖出" count={soldCount} total={totalCount} color="bg-muted-foreground/25" />
+            {/* Status summary */}
+            <div className="border-t border-border pt-4">
+              <div className="grid grid-cols-3 gap-4">
+                <StatusPill label="服役中" count={activeCount} total={totalCount} color="bg-primary" />
+                <StatusPill label="已退役" count={retiredCount} total={totalCount} color="bg-muted-foreground/40" />
+                <StatusPill label="已卖出" count={soldCount} total={totalCount} color="bg-muted-foreground/25" />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div className="px-5">
-        {/* Filter pills - Airbnb horizontal scroll style */}
+        {/* Filter pills */}
         <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {filters.map(f => (
             <button
