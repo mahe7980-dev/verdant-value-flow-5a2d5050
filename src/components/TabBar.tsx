@@ -14,7 +14,7 @@ export default function TabBar() {
   if (pathname === '/add') return null;
 
   return (
-    <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5">
+    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5 pb-[env(safe-area-inset-bottom)]">
       {/* iOS 26 liquid glass tab bar */}
       <div
         className="relative flex items-center gap-0.5 px-1 py-1 rounded-full overflow-hidden"
