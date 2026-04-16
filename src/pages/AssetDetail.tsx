@@ -17,7 +17,7 @@ export default function AssetDetail() {
   const daily = getDailyCost(asset.price, asset.purchaseDate);
   const curve = getDepreciationCurve(asset.price, Math.max(days, 365));
   const emoji = getAssetEmoji(asset.name, asset.category);
-  const sharedTransition = { type: 'spring', stiffness: 360, damping: 34, mass: 0.9 };
+  const sharedTransition = { type: 'spring' as const, stiffness: 360, damping: 34, mass: 0.9 };
 
   const handleDelete = () => {
     deleteAsset(asset.id);
@@ -33,6 +33,7 @@ export default function AssetDetail() {
   return (
     <motion.div
       className="fixed inset-0 z-50 bg-card overflow-y-auto pb-28"
+      layoutRoot
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
     >
@@ -59,7 +60,7 @@ export default function AssetDetail() {
           layoutId={`asset-content-${asset.id}`}
           className="flex flex-col items-center will-change-transform"
           transition={sharedTransition}
-          style={{ originX: 0.5, originY: 0 }}
+          style={{ originX: 0, originY: 0 }}
         >
           <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-accent">
             <span className="text-4xl">{emoji}</span>

@@ -9,7 +9,7 @@ const STATUS_DOT: Record<string, string> = {
 };
 
 const sharedTransition = {
-  type: 'spring',
+  type: 'spring' as const,
   stiffness: 360,
   damping: 34,
   mass: 0.9,
