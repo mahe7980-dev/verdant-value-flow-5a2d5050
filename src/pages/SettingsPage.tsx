@@ -93,6 +93,7 @@ const currencyOptions: { value: CurrencyCode; label: string }[] = [
   { value: 'EUR', label: '🇪🇺 欧元 €' },
   { value: 'GBP', label: '🇬🇧 英镑 £' },
   { value: 'JPY', label: '🇯🇵 日元 ¥' },
+  { value: 'HKD', label: '🇭🇰 港币 HK$' },
 ];
 
 const durationOptions: { value: DurationUnit; label: string }[] = [

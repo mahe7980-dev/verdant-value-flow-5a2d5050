@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-export type CurrencyCode = 'CNY' | 'USD' | 'EUR' | 'GBP' | 'JPY';
+export type CurrencyCode = 'CNY' | 'USD' | 'EUR' | 'GBP' | 'JPY' | 'HKD';
 export type DurationUnit = 'day' | 'week' | 'month' | 'year';
 export type ThemeMode = 'light' | 'dark';
 
@@ -17,6 +17,7 @@ const CURRENCY_MAP: Record<CurrencyCode, { symbol: string; label: string }> = {
   EUR: { symbol: '€', label: '欧元 €' },
   GBP: { symbol: '£', label: '英镑 £' },
   JPY: { symbol: '¥', label: '日元 ¥' },
+  HKD: { symbol: 'HK$', label: '港币 HK$' },
 };
 
 const DURATION_MAP: Record<DurationUnit, { label: string; shortLabel: string; divisor: number }> = {
