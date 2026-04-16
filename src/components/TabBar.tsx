@@ -70,7 +70,7 @@ export default function TabBar() {
                 }`}
               />
               {isActive && (
-                <span className="text-[13px] font-semibold text-foreground leading-none animate-in fade-in slide-in-from-left-1 duration-200">
+                <span className="text-[13px] font-semibold text-foreground leading-none whitespace-nowrap animate-in fade-in slide-in-from-left-1 duration-200">
                   {tab.label}
                 </span>
               )}
