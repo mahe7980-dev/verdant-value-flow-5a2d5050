@@ -16,10 +16,10 @@ export default function AssetCard({ asset }: { asset: Asset }) {
 
   return (
     <motion.button
-      layoutId={`asset-card-${asset.id}`}
+      layoutId={`asset-bg-${asset.id}`}
       onClick={() => navigate(`/asset/${asset.id}`)}
       className="w-full rounded-2xl bg-card card-shadow p-4 text-left card-press flex flex-col"
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
     >
       <div className="flex items-start justify-between mb-3">
         <motion.div
