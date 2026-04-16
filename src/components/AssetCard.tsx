@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Asset, getDaysUsed, getDailyCost, STATUS_LABELS, getAssetEmoji } from '@/lib/assets';
+import { useSettings } from '@/lib/settings';
 
 const STATUS_DOT: Record<string, string> = {
   active: 'bg-primary',
@@ -10,6 +11,7 @@ const STATUS_DOT: Record<string, string> = {
 
 export default function AssetCard({ asset }: { asset: Asset }) {
   const navigate = useNavigate();
+  const { formatPrice, formatDailyCost, formatDuration, durationSuffix } = useSettings();
   const days = getDaysUsed(asset.purchaseDate);
   const daily = getDailyCost(asset.price, asset.purchaseDate);
   const emoji = asset.emoji || getAssetEmoji(asset.name, asset.category);
@@ -47,7 +49,7 @@ export default function AssetCard({ asset }: { asset: Asset }) {
         {asset.name}
       </motion.span>
       <span className="text-[11px] text-muted-foreground mt-1 leading-4 truncate block">
-        ¥{asset.price.toLocaleString('zh-CN')} · {days}天
+        {formatPrice(asset.price)} · {formatDuration(days)}
       </span>
       <motion.div
         layoutId={`asset-daily-${asset.id}`}
@@ -55,9 +57,9 @@ export default function AssetCard({ asset }: { asset: Asset }) {
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
         <span className="text-lg font-bold text-foreground leading-none">
-          ¥{daily.toFixed(2)}
+          {formatDailyCost(daily)}
         </span>
-        <span className="text-[10px] font-normal text-muted-foreground ml-0.5">/天</span>
+        <span className="text-[10px] font-normal text-muted-foreground ml-0.5">{durationSuffix}</span>
       </motion.div>
     </motion.button>
   );

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, ChevronRight, Calendar, LayoutGrid, DollarSign, FileText } from 'lucide-react';
+import { useSettings } from '@/lib/settings';
 import { addAsset, CATEGORIES, CATEGORY_EMOJI } from '@/lib/assets';
 
 const EMOJI_LIST = [
@@ -82,6 +83,7 @@ function EmojiPicker({ selected, onSelect, onClose }: { selected: string; onSele
 
 export default function AddAsset() {
   const navigate = useNavigate();
+  const { currencySymbol } = useSettings();
   const [name, setName] = useState('');
   const [emoji, setEmoji] = useState('📦');
   const [price, setPrice] = useState('');
@@ -157,7 +159,7 @@ export default function AddAsset() {
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
               <DollarSign size={15} className="text-amber-500" strokeWidth={2} />
             </span>
-            <span className="text-[14px] font-medium text-foreground">价格</span>
+            <span className="text-[14px] font-medium text-foreground">价格（{currencySymbol}）</span>
             <input
               type="number"
               value={price}

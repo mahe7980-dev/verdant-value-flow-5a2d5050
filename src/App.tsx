@@ -4,6 +4,7 @@ import { AnimatePresence } from "framer-motion";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SettingsProvider } from "@/lib/settings";
 import TabBar from "./components/TabBar";
 import Dashboard from "./pages/Dashboard";
 import AssetDetail from "./pages/AssetDetail";
@@ -33,12 +34,14 @@ function AnimatedRoutes() {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AnimatedRoutes />
-        <TabBar />
-      </BrowserRouter>
+      <SettingsProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AnimatedRoutes />
+          <TabBar />
+        </BrowserRouter>
+      </SettingsProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
