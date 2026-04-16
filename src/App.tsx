@@ -17,7 +17,7 @@ const queryClient = new QueryClient();
 function AnimatedRoutes() {
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="popLayout">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/asset/:id" element={<AssetDetail />} />
