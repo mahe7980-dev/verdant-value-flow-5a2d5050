@@ -12,18 +12,18 @@ export default function TabBar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  if (pathname === '/add' || pathname.startsWith('/asset/')) return null;
+  if (pathname === '/add') return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3">
-      <div className="flex items-center rounded-full border border-border bg-card card-shadow">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3">
+      <div className="flex items-center rounded-full bg-card card-shadow border border-border">
         {tabs.map((tab) => {
           const isActive = pathname === tab.path;
           return (
             <button
               key={tab.path}
               onClick={() => navigate(tab.path)}
-              className={`flex h-14 w-14 flex-col items-center justify-center rounded-full transition-all ${
+              className={`flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all ${
                 isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
