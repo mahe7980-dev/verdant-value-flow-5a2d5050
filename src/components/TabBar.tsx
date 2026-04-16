@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const tabs = [
   { path: '/', icon: Home, label: '首页' },
   { path: '/analytics', icon: PieChart, label: '分析' },
-  { path: '/placeholder', icon: Circle, label: '记录' },
   { path: '/settings', icon: Settings, label: '设置' },
 ];
 
