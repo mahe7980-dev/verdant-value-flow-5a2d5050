@@ -10,9 +10,9 @@ const STATUS_DOT: Record<string, string> = {
 
 const sharedTransition = {
   type: 'spring' as const,
-  stiffness: 360,
-  damping: 34,
-  mass: 0.9,
+  stiffness: 300,
+  damping: 30,
+  mass: 1,
 };
 
 export default function AssetCard({ asset }: { asset: Asset }) {
@@ -23,18 +23,14 @@ export default function AssetCard({ asset }: { asset: Asset }) {
 
   return (
     <motion.button
-      layoutId={`asset-bg-${asset.id}`}
+      layoutId={`asset-card-${asset.id}`}
       onClick={() => navigate(`/asset/${asset.id}`)}
       className="w-full rounded-2xl bg-card card-shadow p-4 text-left card-press flex flex-col"
       transition={sharedTransition}
+      style={{ borderRadius: 16 }}
     >
       <div className="mb-3 flex items-start justify-between gap-3">
-        <motion.div
-          layoutId={`asset-content-${asset.id}`}
-          className="flex min-w-0 flex-1 flex-col items-start will-change-transform"
-          transition={sharedTransition}
-          style={{ originX: 0, originY: 0 }}
-        >
+        <div className="flex min-w-0 flex-1 flex-col items-start">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent">
             <span className="text-xl">{emoji}</span>
           </div>
@@ -45,7 +41,7 @@ export default function AssetCard({ asset }: { asset: Asset }) {
             ¥{daily.toFixed(1)}
             <span className="text-[11px] font-normal text-muted-foreground">/天</span>
           </div>
-        </motion.div>
+        </div>
         <span className="mt-0.5 flex shrink-0 items-center gap-1.5 rounded-full bg-secondary px-2 py-0.5">
           <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[asset.status] || 'bg-muted-foreground'}`} />
           <span className="text-[10px] font-medium text-muted-foreground">{STATUS_LABELS[asset.status]}</span>
