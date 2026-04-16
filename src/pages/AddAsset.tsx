@@ -159,7 +159,7 @@ export default function AddAsset() {
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
               <DollarSign size={15} className="text-amber-500" strokeWidth={2} />
             </span>
-            <span className="text-[14px] font-medium text-foreground">价格</span>
+            <span className="text-[14px] font-medium text-foreground">价格（{currencySymbol}）</span>
             <input
               type="number"
               value={price}
