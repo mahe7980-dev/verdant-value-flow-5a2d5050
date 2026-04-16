@@ -8,6 +8,13 @@ const STATUS_DOT: Record<string, string> = {
   sold: 'bg-destructive/60',
 };
 
+const sharedTransition = {
+  type: 'spring' as const,
+  stiffness: 360,
+  damping: 34,
+  mass: 0.9,
+};
+
 export default function AssetCard({ asset }: { asset: Asset }) {
   const navigate = useNavigate();
   const days = getDaysUsed(asset.purchaseDate);
@@ -19,40 +26,35 @@ export default function AssetCard({ asset }: { asset: Asset }) {
       layoutId={`asset-bg-${asset.id}`}
       onClick={() => navigate(`/asset/${asset.id}`)}
       className="w-full rounded-2xl bg-card card-shadow p-4 text-left card-press flex flex-col"
-      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+      transition={sharedTransition}
     >
-      <div className="flex items-start justify-between mb-3">
+      <div className="mb-3 flex items-start justify-between gap-3">
         <motion.div
-          layoutId={`asset-emoji-${asset.id}`}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          layoutId={`asset-content-${asset.id}`}
+          className="flex min-w-0 flex-1 flex-col items-start will-change-transform"
+          transition={sharedTransition}
+          style={{ originX: 0, originY: 0 }}
         >
-          <span className="text-xl">{emoji}</span>
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent">
+            <span className="text-xl">{emoji}</span>
+          </div>
+          <div className="mt-3 truncate text-[13px] font-semibold leading-tight text-foreground">
+            {asset.name}
+          </div>
+          <div className="mt-2.5 text-lg font-bold leading-none text-foreground">
+            ¥{daily.toFixed(1)}
+            <span className="text-[11px] font-normal text-muted-foreground">/天</span>
+          </div>
         </motion.div>
-        <span className="flex items-center gap-1.5 rounded-full bg-secondary px-2 py-0.5">
+        <span className="mt-0.5 flex shrink-0 items-center gap-1.5 rounded-full bg-secondary px-2 py-0.5">
           <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[asset.status] || 'bg-muted-foreground'}`} />
           <span className="text-[10px] font-medium text-muted-foreground">{STATUS_LABELS[asset.status]}</span>
         </span>
       </div>
 
-      <motion.span
-        layoutId={`asset-name-${asset.id}`}
-        className="font-semibold text-[13px] leading-tight truncate text-foreground"
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      >
-        {asset.name}
-      </motion.span>
-      <span className="text-[11px] text-muted-foreground mt-1 h-4 min-h-[16px] leading-4 truncate">
+      <span className="mt-1 h-4 min-h-[16px] truncate text-[11px] leading-4 text-muted-foreground">
         ¥{asset.price.toLocaleString('zh-CN', { minimumFractionDigits: 2 })} · {days} 天
       </span>
-      <motion.span
-        layoutId={`asset-daily-${asset.id}`}
-        className="text-lg font-bold text-foreground mt-2.5 leading-none"
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      >
-        ¥{daily.toFixed(2)}
-        <span className="text-[11px] font-normal text-muted-foreground">/天</span>
-      </motion.span>
     </motion.button>
   );
 }

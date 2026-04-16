@@ -17,6 +17,7 @@ export default function AssetDetail() {
   const daily = getDailyCost(asset.price, asset.purchaseDate);
   const curve = getDepreciationCurve(asset.price, Math.max(days, 365));
   const emoji = getAssetEmoji(asset.name, asset.category);
+  const sharedTransition = { type: 'spring' as const, stiffness: 360, damping: 34, mass: 0.9 };
 
   const handleDelete = () => {
     deleteAsset(asset.id);
@@ -32,13 +33,14 @@ export default function AssetDetail() {
   return (
     <motion.div
       className="fixed inset-0 z-50 bg-card overflow-y-auto pb-28"
+      layoutRoot
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
     >
       <motion.div
         layoutId={`asset-bg-${asset.id}`}
         className="absolute inset-0 bg-card"
-        transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+        transition={sharedTransition}
       />
       {/* Top bar */}
       <div className="relative px-5 pt-14 flex items-center justify-between">
@@ -53,35 +55,35 @@ export default function AssetDetail() {
         </button>
       </div>
 
-      {/* Hero — centered */}
-      <div className="relative flex flex-col items-center mt-6 mb-8 px-5">
+      <div className="relative mt-6 mb-8 px-5">
         <motion.div
-          layoutId={`asset-emoji-${asset.id}`}
-          className="flex h-20 w-20 items-center justify-center rounded-2xl bg-accent mb-4"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          layoutId={`asset-content-${asset.id}`}
+          className="flex flex-col items-center will-change-transform"
+          transition={sharedTransition}
+          style={{ originX: 0, originY: 0 }}
         >
-          <span className="text-4xl">{emoji}</span>
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-accent">
+            <span className="text-4xl">{emoji}</span>
+          </div>
+          <div className="mt-4 text-center text-[28px] font-bold leading-tight text-foreground">
+            {asset.name}
+          </div>
+          <div className="mt-2 text-[32px] font-bold leading-none text-foreground">
+            ¥{daily.toFixed(1)}
+            <span className="text-base font-normal text-muted-foreground">/天</span>
+          </div>
         </motion.div>
-        <motion.h1
-          layoutId={`asset-name-${asset.id}`}
-          className="text-xl font-bold text-foreground text-center"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        >
-          {asset.name}
-        </motion.h1>
         <motion.p
-          layoutId={`asset-daily-${asset.id}`}
-          className="text-[32px] font-bold text-foreground mt-2 leading-none"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          className="mt-2 text-center text-sm text-muted-foreground"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 8 }}
+          transition={{ delay: 0.08, duration: 0.2 }}
         >
-          ¥{daily.toFixed(1)}
-          <span className="text-base font-normal text-muted-foreground">/天</span>
-        </motion.p>
-        <p className="text-sm text-muted-foreground mt-2">
           总价：¥{asset.price.toLocaleString('zh-CN', { minimumFractionDigits: 1 })}
           <span className="mx-2">|</span>
           已使用 {days}天
-        </p>
+        </motion.p>
       </div>
 
       <div className="relative px-5 space-y-3">
