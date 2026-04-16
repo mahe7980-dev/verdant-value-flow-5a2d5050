@@ -4,6 +4,7 @@ import { ChevronLeft, Pencil, Trash2, Calendar, Tag, DollarSign } from 'lucide-r
 import { motion } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { getAssets, getDaysUsed, getDailyCost, getDepreciationCurve, deleteAsset, getAssetEmoji } from '@/lib/assets';
+import { useSettings } from '@/lib/settings';
 
 const fadeUp = {
   initial: { opacity: 0, y: 16 },
@@ -13,6 +14,7 @@ const fadeUp = {
 export default function AssetDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { formatPrice, formatDailyCost, formatDuration, durationSuffix, currencySymbol } = useSettings();
   const assets = useMemo(() => getAssets(), []);
   const asset = assets.find(a => a.id === id);
 
@@ -42,7 +44,6 @@ export default function AssetDetail() {
       className="min-h-screen pb-28 bg-card"
       transition={{ type: 'spring', stiffness: 350, damping: 30 }}
     >
-      {/* Top bar */}
       <div className="px-5 pt-14 flex items-center justify-between">
         <button
           onClick={() => navigate(-1)}
@@ -55,7 +56,6 @@ export default function AssetDetail() {
         </button>
       </div>
 
-      {/* Hero */}
       <div className="flex flex-col items-center mt-8 mb-8 px-5">
         <motion.div
           layoutId={`asset-emoji-${asset.id}`}
@@ -77,27 +77,22 @@ export default function AssetDetail() {
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
           <span className="text-[36px] font-bold text-foreground leading-none tracking-tight">
-            ¥{daily.toFixed(1)}
+            {formatDailyCost(daily)}
           </span>
-          <span className="text-sm font-normal text-muted-foreground ml-1">/天</span>
+          <span className="text-sm font-normal text-muted-foreground ml-1">{durationSuffix}</span>
         </motion.div>
         <motion.div
           className="flex items-center gap-3 mt-3"
           {...fadeUp}
           transition={{ delay: 0.1, duration: 0.35 }}
         >
-          <span className="text-[13px] text-muted-foreground">
-            ¥{asset.price.toLocaleString('zh-CN')}
-          </span>
+          <span className="text-[13px] text-muted-foreground">{formatPrice(asset.price)}</span>
           <span className="h-3 w-px bg-border" />
-          <span className="text-[13px] text-muted-foreground">
-            已使用 {days} 天
-          </span>
+          <span className="text-[13px] text-muted-foreground">已使用 {formatDuration(days)}</span>
         </motion.div>
       </div>
 
       <div className="px-5 space-y-3">
-        {/* Chart card */}
         <motion.div
           className="rounded-[18px] bg-background p-5"
           style={{
@@ -106,7 +101,7 @@ export default function AssetDetail() {
           {...fadeUp}
           transition={{ delay: 0.15, duration: 0.35 }}
         >
-          <p className="text-[13px] font-semibold text-foreground mb-4">日均成本趋势</p>
+          <p className="text-[13px] font-semibold text-foreground mb-4">成本趋势</p>
           <ResponsiveContainer width="100%" height={180}>
             <AreaChart data={curve}>
               <defs>
@@ -129,14 +124,14 @@ export default function AssetDetail() {
               />
               <YAxis
                 tick={{ fontSize: 10, fill: 'hsl(0,0%,56%)' }}
-                tickFormatter={v => `¥${v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}`}
+                tickFormatter={v => `${currencySymbol}${v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}`}
                 stroke="transparent"
-                width={40}
+                width={45}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
-                formatter={(v: number) => [`¥${v.toFixed(1)}`, '日均成本']}
+                formatter={(v: number) => [`${currencySymbol}${(v as number).toFixed(1)}`, '日均成本']}
                 labelFormatter={l => `第${l}天`}
                 contentStyle={{
                   borderRadius: 12,
@@ -159,7 +154,6 @@ export default function AssetDetail() {
           </ResponsiveContainer>
         </motion.div>
 
-        {/* Info card */}
         <motion.div
           className="rounded-[18px] bg-background divide-y divide-border/60 overflow-hidden"
           style={{
@@ -172,7 +166,7 @@ export default function AssetDetail() {
             icon={<DollarSign size={15} className="text-primary" />}
             iconBg="bg-accent"
             label="购入价格"
-            value={`¥${asset.price.toLocaleString('zh-CN')}`}
+            value={formatPrice(asset.price)}
           />
           <InfoRow
             icon={<Tag size={15} className="text-primary" />}
@@ -188,7 +182,6 @@ export default function AssetDetail() {
           />
         </motion.div>
 
-        {/* Delete button */}
         <motion.button
           onClick={handleDelete}
           className="w-full flex items-center justify-center gap-2 rounded-[18px] bg-destructive/8 py-3.5 text-destructive text-[14px] font-medium transition-colors hover:bg-destructive/12"

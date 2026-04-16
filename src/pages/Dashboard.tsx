@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, TrendingDown } from "lucide-react";
 import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus } from "@/lib/assets";
+import { useSettings } from "@/lib/settings";
 import AssetCard from "@/components/AssetCard";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -9,6 +10,7 @@ type Filter = "all" | AssetStatus;
 export default function Dashboard() {
   const assets = useMemo(() => getAssets(), []);
   const [filter, setFilter] = useState<Filter>("all");
+  const { formatPrice, formatDailyCost, durationSuffix } = useSettings();
 
   const total = getTotalValue(assets);
   const dailyCost = getOverallDailyCost(assets);
@@ -29,7 +31,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pb-28 bg-background">
-      {/* Gradient background */}
       <div className="relative">
         <div
           className="absolute inset-x-0 top-0 h-[320px] gradient-green"
@@ -39,7 +40,6 @@ export default function Dashboard() {
           }}
         />
 
-        {/* Header */}
         <div className="relative px-6 pt-14 pb-5">
           <div className="flex items-center justify-between mb-0.5">
             <div>
@@ -57,7 +57,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Summary card */}
         <div className="relative px-5">
           <motion.div
             className="rounded-[20px] bg-card p-5 overflow-hidden"
@@ -68,47 +67,36 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            {/* Total value */}
             <div className="mb-5">
               <p className="text-[11px] text-muted-foreground mb-1 tracking-wider uppercase font-medium">总资产价值</p>
               <p className="text-[32px] font-bold text-foreground leading-none tracking-tight">
-                <span className="text-[22px] font-semibold mr-0.5">¥</span>
-                {total.toLocaleString("zh-CN", { minimumFractionDigits: 0 })}
+                {formatPrice(total)}
               </p>
             </div>
 
-            {/* Daily cost highlight */}
             <div className="flex items-center gap-2 mb-5 bg-accent/60 rounded-xl px-3.5 py-2.5">
               <div className="h-8 w-8 rounded-lg gradient-green flex items-center justify-center">
                 <TrendingDown size={14} className="text-primary-foreground" strokeWidth={2.5} />
               </div>
               <div>
-                <p className="text-[11px] text-muted-foreground leading-tight">日均总成本</p>
-                <p className="text-[17px] font-bold text-foreground leading-tight">¥{dailyCost.toFixed(2)}</p>
+                <p className="text-[11px] text-muted-foreground leading-tight">综合成本</p>
+                <p className="text-[17px] font-bold text-foreground leading-tight">
+                  {formatDailyCost(dailyCost)}
+                  <span className="text-[12px] font-normal text-muted-foreground">{durationSuffix}</span>
+                </p>
               </div>
             </div>
 
-            {/* Status bar */}
             <div className="space-y-3">
-              {/* Combined progress bar */}
               <div className="h-2 w-full rounded-full bg-secondary overflow-hidden flex">
                 {activeCount > 0 && (
-                  <div
-                    className="h-full bg-primary transition-all rounded-l-full"
-                    style={{ width: `${(activeCount / totalCount) * 100}%` }}
-                  />
+                  <div className="h-full bg-primary transition-all rounded-l-full" style={{ width: `${(activeCount / totalCount) * 100}%` }} />
                 )}
                 {retiredCount > 0 && (
-                  <div
-                    className="h-full bg-muted-foreground/30 transition-all"
-                    style={{ width: `${(retiredCount / totalCount) * 100}%` }}
-                  />
+                  <div className="h-full bg-muted-foreground/30 transition-all" style={{ width: `${(retiredCount / totalCount) * 100}%` }} />
                 )}
                 {soldCount > 0 && (
-                  <div
-                    className="h-full bg-muted-foreground/15 transition-all rounded-r-full"
-                    style={{ width: `${(soldCount / totalCount) * 100}%` }}
-                  />
+                  <div className="h-full bg-muted-foreground/15 transition-all rounded-r-full" style={{ width: `${(soldCount / totalCount) * 100}%` }} />
                 )}
               </div>
               <div className="flex items-center justify-between">
@@ -122,7 +110,6 @@ export default function Dashboard() {
       </div>
 
       <div className="px-5">
-        {/* Filter pills */}
         <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {filters.map((f) => (
             <button
@@ -144,7 +131,6 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Asset grid */}
         <div className="mt-4 grid grid-cols-2 gap-3">
           <AnimatePresence>
             {filtered.map((a, i) => (
