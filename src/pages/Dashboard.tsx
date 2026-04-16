@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, TrendingDown } from "lucide-react";
 import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus } from "@/lib/assets";
 import AssetCard from "@/components/AssetCard";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Filter = "all" | AssetStatus;
 
@@ -28,57 +29,95 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pb-28 bg-background">
-      {/* Gradient background that fades out behind the summary card */}
+      {/* Gradient background */}
       <div className="relative">
         <div
-          className="absolute inset-x-0 top-0 h-[300px] gradient-green"
+          className="absolute inset-x-0 top-0 h-[320px] gradient-green"
           style={{
-            maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
+            maskImage: "linear-gradient(to bottom, black 40%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, black 40%, transparent 100%)",
           }}
         />
 
         {/* Header */}
-        <div className="relative px-6 pt-14 pb-6">
-          <div className="flex items-center justify-between mb-1">
-            <h1 className="text-[28px] font-bold tracking-tight text-primary-foreground">有数</h1>
+        <div className="relative px-6 pt-14 pb-5">
+          <div className="flex items-center justify-between mb-0.5">
+            <div>
+              <h1 className="text-[28px] font-bold tracking-tight text-primary-foreground leading-tight">有数</h1>
+              <p className="text-[13px] text-primary-foreground/70 mt-0.5">长期主义，理性消费</p>
+            </div>
             <div className="flex items-center gap-2">
-              <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm">
-                <Search size={18} strokeWidth={1.5} className="text-primary-foreground" />
+              <button className="h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10">
+                <Search size={16} strokeWidth={1.8} className="text-primary-foreground" />
               </button>
-              <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm">
-                <SlidersHorizontal size={18} strokeWidth={1.5} className="text-primary-foreground" />
+              <button className="h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10">
+                <SlidersHorizontal size={16} strokeWidth={1.8} className="text-primary-foreground" />
               </button>
             </div>
           </div>
-          <p className="text-sm text-primary-foreground/80">长期主义记账生活消费</p>
         </div>
 
         {/* Summary card */}
         <div className="relative px-5">
-          <div className="rounded-2xl bg-card card-shadow p-5">
-            <div className="flex items-baseline justify-between mb-5">
-              <div>
-                <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">总资产</p>
-                <p className="text-[26px] font-bold text-foreground leading-none">
-                  ¥{total.toLocaleString("zh-CN", { minimumFractionDigits: 2 })}
-                </p>
+          <motion.div
+            className="rounded-[20px] bg-card p-5 overflow-hidden"
+            style={{
+              boxShadow: '0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)',
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            {/* Total value */}
+            <div className="mb-5">
+              <p className="text-[11px] text-muted-foreground mb-1 tracking-wider uppercase font-medium">总资产价值</p>
+              <p className="text-[32px] font-bold text-foreground leading-none tracking-tight">
+                <span className="text-[22px] font-semibold mr-0.5">¥</span>
+                {total.toLocaleString("zh-CN", { minimumFractionDigits: 0 })}
+              </p>
+            </div>
+
+            {/* Daily cost highlight */}
+            <div className="flex items-center gap-2 mb-5 bg-accent/60 rounded-xl px-3.5 py-2.5">
+              <div className="h-8 w-8 rounded-lg gradient-green flex items-center justify-center">
+                <TrendingDown size={14} className="text-primary-foreground" strokeWidth={2.5} />
               </div>
-              <div className="text-right">
-                <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">日均成本</p>
-                <p className="text-[26px] font-bold text-foreground leading-none">¥{dailyCost.toFixed(2)}</p>
+              <div>
+                <p className="text-[11px] text-muted-foreground leading-tight">日均总成本</p>
+                <p className="text-[17px] font-bold text-foreground leading-tight">¥{dailyCost.toFixed(2)}</p>
               </div>
             </div>
 
-            {/* Status summary */}
-            <div className="border-t border-border pt-4">
-              <div className="grid grid-cols-3 gap-4">
-                <StatusPill label="服役中" count={activeCount} total={totalCount} color="bg-primary" />
-                <StatusPill label="已退役" count={retiredCount} total={totalCount} color="bg-muted-foreground/40" />
-                <StatusPill label="已卖出" count={soldCount} total={totalCount} color="bg-muted-foreground/25" />
+            {/* Status bar */}
+            <div className="space-y-3">
+              {/* Combined progress bar */}
+              <div className="h-2 w-full rounded-full bg-secondary overflow-hidden flex">
+                {activeCount > 0 && (
+                  <div
+                    className="h-full bg-primary transition-all rounded-l-full"
+                    style={{ width: `${(activeCount / totalCount) * 100}%` }}
+                  />
+                )}
+                {retiredCount > 0 && (
+                  <div
+                    className="h-full bg-muted-foreground/30 transition-all"
+                    style={{ width: `${(retiredCount / totalCount) * 100}%` }}
+                  />
+                )}
+                {soldCount > 0 && (
+                  <div
+                    className="h-full bg-muted-foreground/15 transition-all rounded-r-full"
+                    style={{ width: `${(soldCount / totalCount) * 100}%` }}
+                  />
+                )}
+              </div>
+              <div className="flex items-center justify-between">
+                <StatusLabel label="服役中" count={activeCount} color="bg-primary" />
+                <StatusLabel label="已退役" count={retiredCount} color="bg-muted-foreground/30" />
+                <StatusLabel label="已卖出" count={soldCount} color="bg-muted-foreground/15" />
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -89,15 +128,15 @@ export default function Dashboard() {
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
-              className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+              className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-medium transition-all ${
                 filter === f.key
-                  ? "bg-foreground text-background border-foreground"
-                  : "bg-background text-foreground border-border hover:border-foreground/30"
+                  ? "bg-foreground text-background shadow-sm"
+                  : "bg-secondary text-muted-foreground hover:text-foreground"
               }`}
             >
               {f.label}
               {f.count > 0 && (
-                <span className={`ml-1.5 text-xs ${filter === f.key ? "text-background/70" : "text-muted-foreground"}`}>
+                <span className={`ml-1 text-[11px] ${filter === f.key ? "text-background/60" : "text-muted-foreground/60"}`}>
                   {f.count}
                 </span>
               )}
@@ -107,13 +146,24 @@ export default function Dashboard() {
 
         {/* Asset grid */}
         <div className="mt-4 grid grid-cols-2 gap-3">
-          {filtered.map((a) => (
-            <AssetCard key={a.id} asset={a} />
-          ))}
+          <AnimatePresence>
+            {filtered.map((a, i) => (
+              <motion.div
+                key={a.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ delay: i * 0.04, duration: 0.3 }}
+              >
+                <AssetCard asset={a} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
 
         {filtered.length === 0 && (
-          <div className="text-center py-16">
+          <div className="text-center py-20">
+            <p className="text-4xl mb-3">📦</p>
             <p className="text-muted-foreground text-sm">暂无资产</p>
           </div>
         )}
@@ -122,20 +172,12 @@ export default function Dashboard() {
   );
 }
 
-function StatusPill({ label, count, total, color }: { label: string; count: number; total: number; color: string }) {
-  const pct = total > 0 ? (count / total) * 100 : 0;
+function StatusLabel({ label, count, color }: { label: string; count: number; color: string }) {
   return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-muted-foreground">{label}</span>
-        <span className="text-xs font-semibold text-foreground">{count}</span>
-      </div>
-      <div className="h-1 w-full rounded-full bg-secondary overflow-hidden">
-        <div
-          className={`h-full rounded-full ${color} transition-all`}
-          style={{ width: `${Math.max(pct, pct > 0 ? 8 : 0)}%` }}
-        />
-      </div>
+    <div className="flex items-center gap-1.5">
+      <span className={`h-2 w-2 rounded-full ${color}`} />
+      <span className="text-[11px] text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-semibold text-foreground">{count}</span>
     </div>
   );
 }
