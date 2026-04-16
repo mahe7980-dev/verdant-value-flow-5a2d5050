@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, ChevronRight, Calendar, LayoutGrid, DollarSign, FileText } from 'lucide-react';
+import { useSettings } from '@/lib/settings';
 import { addAsset, CATEGORIES, CATEGORY_EMOJI } from '@/lib/assets';
 
 const EMOJI_LIST = [
