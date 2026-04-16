@@ -10,7 +10,7 @@ type Filter = "all" | AssetStatus;
 export default function Dashboard() {
   const assets = useMemo(() => getAssets(), []);
   const [filter, setFilter] = useState<Filter>("all");
-  const { formatPrice, formatDailyCost, durationSuffix } = useSettings();
+  const { formatPrice, formatDailyCost, durationSuffix, currencySymbol, settings } = useSettings();
 
   const total = getTotalValue(assets);
   const dailyCost = getOverallDailyCost(assets);
@@ -79,10 +79,10 @@ export default function Dashboard() {
                 <TrendingDown size={14} className="text-primary-foreground" strokeWidth={2.5} />
               </div>
               <div>
-                <p className="text-[11px] text-muted-foreground leading-tight">综合成本</p>
+                <p className="text-[11px] text-muted-foreground leading-tight">日均成本</p>
                 <p className="text-[17px] font-bold text-foreground leading-tight">
-                  {formatDailyCost(dailyCost)}
-                  <span className="text-[12px] font-normal text-muted-foreground">{durationSuffix}</span>
+                  {`${currencySymbol}${dailyCost.toFixed(settings.decimalPlaces)}`}
+                  <span className="text-[12px] font-normal text-muted-foreground">/天</span>
                 </p>
               </div>
             </div>
