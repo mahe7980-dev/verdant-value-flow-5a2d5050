@@ -31,10 +31,9 @@ export default function AssetDetail() {
 
   return (
     <motion.div
-      className="min-h-screen pb-28 bg-background"
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
+      layoutId={`asset-bg-${asset.id}`}
+      className="min-h-screen pb-28 bg-card"
+      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
     >
       {/* Top bar */}
       <div className="px-5 pt-14 flex items-center justify-between">
