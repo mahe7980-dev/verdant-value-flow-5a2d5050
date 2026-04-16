@@ -12,7 +12,7 @@ export default function AssetCard({ asset }: { asset: Asset }) {
   const navigate = useNavigate();
   const days = getDaysUsed(asset.purchaseDate);
   const daily = getDailyCost(asset.price, asset.purchaseDate);
-  const emoji = getAssetEmoji(asset.name, asset.category);
+  const emoji = asset.emoji || getAssetEmoji(asset.name, asset.category);
 
   return (
     <motion.button

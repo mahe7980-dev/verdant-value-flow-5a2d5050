@@ -16,7 +16,7 @@ export default function AssetDetail() {
   const days = getDaysUsed(asset.purchaseDate);
   const daily = getDailyCost(asset.price, asset.purchaseDate);
   const curve = getDepreciationCurve(asset.price, Math.max(days, 365));
-  const emoji = getAssetEmoji(asset.name, asset.category);
+  const emoji = asset.emoji || getAssetEmoji(asset.name, asset.category);
 
   const handleDelete = () => {
     deleteAsset(asset.id);
