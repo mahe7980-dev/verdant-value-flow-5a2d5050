@@ -31,12 +31,17 @@ export default function AssetDetail() {
 
   return (
     <motion.div
-      layoutId={`asset-bg-${asset.id}`}
-      className="min-h-screen pb-28 bg-card"
-      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+      className="fixed inset-0 z-50 bg-card overflow-y-auto pb-28"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.2 } }}
     >
+      <motion.div
+        layoutId={`asset-bg-${asset.id}`}
+        className="absolute inset-0 bg-card"
+        transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+      />
       {/* Top bar */}
-      <div className="px-5 pt-14 flex items-center justify-between">
+      <div className="relative px-5 pt-14 flex items-center justify-between">
         <button
           onClick={() => navigate(-1)}
           className="h-10 w-10 flex items-center justify-center rounded-full bg-secondary"
