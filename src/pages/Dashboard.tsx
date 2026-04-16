@@ -1,29 +1,29 @@
-import { useMemo, useState } from 'react';
-import { Search, SlidersHorizontal } from 'lucide-react';
-import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus } from '@/lib/assets';
-import AssetCard from '@/components/AssetCard';
+import { useMemo, useState } from "react";
+import { Search, SlidersHorizontal } from "lucide-react";
+import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus } from "@/lib/assets";
+import AssetCard from "@/components/AssetCard";
 
-type Filter = 'all' | AssetStatus;
+type Filter = "all" | AssetStatus;
 
 export default function Dashboard() {
   const assets = useMemo(() => getAssets(), []);
-  const [filter, setFilter] = useState<Filter>('all');
+  const [filter, setFilter] = useState<Filter>("all");
 
   const total = getTotalValue(assets);
   const dailyCost = getOverallDailyCost(assets);
 
-  const activeCount = assets.filter(a => a.status === 'active').length;
-  const retiredCount = assets.filter(a => a.status === 'retired').length;
-  const soldCount = assets.filter(a => a.status === 'sold').length;
+  const activeCount = assets.filter((a) => a.status === "active").length;
+  const retiredCount = assets.filter((a) => a.status === "retired").length;
+  const soldCount = assets.filter((a) => a.status === "sold").length;
   const totalCount = assets.length;
 
-  const filtered = filter === 'all' ? assets : assets.filter(a => a.status === filter);
+  const filtered = filter === "all" ? assets : assets.filter((a) => a.status === filter);
 
   const filters: { key: Filter; label: string; count: number }[] = [
-    { key: 'all', label: '全部', count: totalCount },
-    { key: 'active', label: '服役中', count: activeCount },
-    { key: 'retired', label: '已退役', count: retiredCount },
-    { key: 'sold', label: '已卖出', count: soldCount },
+    { key: "all", label: "全部", count: totalCount },
+    { key: "active", label: "服役中", count: activeCount },
+    { key: "retired", label: "已退役", count: retiredCount },
+    { key: "sold", label: "已卖出", count: soldCount },
   ];
 
   return (
@@ -33,8 +33,8 @@ export default function Dashboard() {
         <div
           className="absolute inset-x-0 top-0 h-[300px] gradient-green"
           style={{
-            maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+            maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
           }}
         />
 
@@ -51,7 +51,7 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
-          <p className="text-sm text-primary-foreground/80">管理你的每一件物品</p>
+          <p className="text-sm text-primary-foreground/80">长期主义记账生活消费</p>
         </div>
 
         {/* Summary card */}
@@ -61,7 +61,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-xs text-muted-foreground mb-1.5 tracking-wide">总资产</p>
                 <p className="text-[26px] font-bold text-foreground leading-none">
-                  ¥{total.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
+                  ¥{total.toLocaleString("zh-CN", { minimumFractionDigits: 2 })}
                 </p>
               </div>
               <div className="text-right">
@@ -85,19 +85,19 @@ export default function Dashboard() {
       <div className="px-5">
         {/* Filter pills */}
         <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {filters.map(f => (
+          {filters.map((f) => (
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
               className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium border transition-all ${
                 filter === f.key
-                  ? 'bg-foreground text-background border-foreground'
-                  : 'bg-background text-foreground border-border hover:border-foreground/30'
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-background text-foreground border-border hover:border-foreground/30"
               }`}
             >
               {f.label}
               {f.count > 0 && (
-                <span className={`ml-1.5 text-xs ${filter === f.key ? 'text-background/70' : 'text-muted-foreground'}`}>
+                <span className={`ml-1.5 text-xs ${filter === f.key ? "text-background/70" : "text-muted-foreground"}`}>
                   {f.count}
                 </span>
               )}
@@ -107,7 +107,7 @@ export default function Dashboard() {
 
         {/* Asset grid */}
         <div className="mt-4 grid grid-cols-2 gap-3">
-          {filtered.map(a => (
+          {filtered.map((a) => (
             <AssetCard key={a.id} asset={a} />
           ))}
         </div>
@@ -131,7 +131,10 @@ function StatusPill({ label, count, total, color }: { label: string; count: numb
         <span className="text-xs font-semibold text-foreground">{count}</span>
       </div>
       <div className="h-1 w-full rounded-full bg-secondary overflow-hidden">
-        <div className={`h-full rounded-full ${color} transition-all`} style={{ width: `${Math.max(pct, pct > 0 ? 8 : 0)}%` }} />
+        <div
+          className={`h-full rounded-full ${color} transition-all`}
+          style={{ width: `${Math.max(pct, pct > 0 ? 8 : 0)}%` }}
+        />
       </div>
     </div>
   );
