@@ -1,9 +1,14 @@
 import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { X, Pencil, Trash2 } from 'lucide-react';
+import { ChevronLeft, Pencil, Trash2, Calendar, Tag, DollarSign } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { getAssets, getDaysUsed, getDailyCost, getDepreciationCurve, deleteAsset, getAssetEmoji } from '@/lib/assets';
+
+const fadeUp = {
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+};
 
 export default function AssetDetail() {
   const { id } = useParams();
@@ -19,8 +24,10 @@ export default function AssetDetail() {
   const emoji = asset.emoji || getAssetEmoji(asset.name, asset.category);
 
   const handleDelete = () => {
-    deleteAsset(asset.id);
-    navigate('/');
+    if (confirm('确定要删除这个资产吗？')) {
+      deleteAsset(asset.id);
+      navigate('/');
+    }
   };
 
   const purchaseDateFormatted = new Date(asset.purchaseDate).toLocaleDateString('zh-CN', {
@@ -39,80 +46,92 @@ export default function AssetDetail() {
       <div className="px-5 pt-14 flex items-center justify-between">
         <button
           onClick={() => navigate(-1)}
-          className="h-10 w-10 flex items-center justify-center rounded-full bg-secondary"
+          className="h-9 w-9 flex items-center justify-center rounded-full bg-secondary/80"
         >
-          <X size={20} strokeWidth={1.5} className="text-foreground" />
+          <ChevronLeft size={18} strokeWidth={2} className="text-foreground" />
         </button>
-        <button className="h-10 w-10 flex items-center justify-center rounded-full bg-secondary">
-          <Pencil size={18} strokeWidth={1.5} className="text-foreground" />
+        <button className="h-9 w-9 flex items-center justify-center rounded-full bg-secondary/80">
+          <Pencil size={15} strokeWidth={2} className="text-foreground" />
         </button>
       </div>
 
-      {/* Hero — centered */}
-      <div className="flex flex-col items-center mt-6 mb-8 px-5">
+      {/* Hero */}
+      <div className="flex flex-col items-center mt-8 mb-8 px-5">
         <motion.div
           layoutId={`asset-emoji-${asset.id}`}
-          className="flex h-20 w-20 items-center justify-center rounded-2xl bg-accent mb-4"
+          className="flex h-[72px] w-[72px] items-center justify-center rounded-[22px] bg-accent mb-4"
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
-          <span className="text-4xl">{emoji}</span>
+          <span className="text-[36px]">{emoji}</span>
         </motion.div>
         <motion.h1
           layoutId={`asset-name-${asset.id}`}
-          className="text-xl font-bold text-foreground text-center"
+          className="text-xl font-bold text-foreground text-center leading-tight"
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
           {asset.name}
         </motion.h1>
-        <motion.p
+        <motion.div
           layoutId={`asset-daily-${asset.id}`}
-          className="text-[32px] font-bold text-foreground mt-2 leading-none"
+          className="mt-3"
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
-          ¥{daily.toFixed(1)}
-          <span className="text-base font-normal text-muted-foreground">/天</span>
-        </motion.p>
-        <p className="text-sm text-muted-foreground mt-2">
-          总价：¥{asset.price.toLocaleString('zh-CN', { minimumFractionDigits: 1 })}
-          <span className="mx-2">|</span>
-          已使用 {days}天
-        </p>
+          <span className="text-[36px] font-bold text-foreground leading-none tracking-tight">
+            ¥{daily.toFixed(1)}
+          </span>
+          <span className="text-sm font-normal text-muted-foreground ml-1">/天</span>
+        </motion.div>
+        <motion.div
+          className="flex items-center gap-3 mt-3"
+          {...fadeUp}
+          transition={{ delay: 0.1, duration: 0.35 }}
+        >
+          <span className="text-[13px] text-muted-foreground">
+            ¥{asset.price.toLocaleString('zh-CN')}
+          </span>
+          <span className="h-3 w-px bg-border" />
+          <span className="text-[13px] text-muted-foreground">
+            已使用 {days} 天
+          </span>
+        </motion.div>
       </div>
 
       <div className="px-5 space-y-3">
         {/* Chart card */}
         <motion.div
-          className="rounded-2xl bg-card card-shadow p-5"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          className="rounded-[18px] bg-background p-5"
+          style={{
+            boxShadow: '0 0 0 1px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.03), 0 4px 14px rgba(0,0,0,0.04)',
+          }}
+          {...fadeUp}
           transition={{ delay: 0.15, duration: 0.35 }}
         >
-          <p className="text-sm font-semibold text-foreground mb-4">日均成本</p>
-          <ResponsiveContainer width="100%" height={200}>
+          <p className="text-[13px] font-semibold text-foreground mb-4">日均成本趋势</p>
+          <ResponsiveContainer width="100%" height={180}>
             <AreaChart data={curve}>
               <defs>
                 <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(145,45%,52%)" stopOpacity={0.15} />
+                  <stop offset="0%" stopColor="hsl(145,45%,52%)" stopOpacity={0.12} />
                   <stop offset="100%" stopColor="hsl(145,45%,52%)" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis
                 dataKey="day"
-                tick={{ fontSize: 11, fill: 'hsl(0,0%,56%)' }}
+                tick={{ fontSize: 10, fill: 'hsl(0,0%,56%)' }}
                 tickFormatter={v => {
                   const d = new Date(asset.purchaseDate);
                   d.setDate(d.getDate() + v);
-                  return `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+                  return `${d.getMonth() + 1}/${d.getDate()}`;
                 }}
-                stroke="hsl(0,0%,92%)"
+                stroke="transparent"
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 11, fill: 'hsl(0,0%,56%)' }}
-                tickFormatter={v => v.toLocaleString()}
-                stroke="hsl(0,0%,92%)"
-                width={50}
+                tick={{ fontSize: 10, fill: 'hsl(0,0%,56%)' }}
+                tickFormatter={v => `¥${v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}`}
+                stroke="transparent"
+                width={40}
                 axisLine={false}
                 tickLine={false}
               />
@@ -122,8 +141,9 @@ export default function AssetDetail() {
                 contentStyle={{
                   borderRadius: 12,
                   border: 'none',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                  fontSize: 13,
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                  fontSize: 12,
+                  padding: '8px 12px',
                 }}
               />
               <Area
@@ -133,7 +153,7 @@ export default function AssetDetail() {
                 fill="url(#greenGrad)"
                 strokeWidth={2}
                 dot={false}
-                activeDot={{ r: 5, fill: 'hsl(145,45%,52%)', stroke: '#fff', strokeWidth: 2 }}
+                activeDot={{ r: 4, fill: 'hsl(145,45%,52%)', stroke: '#fff', strokeWidth: 2 }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -141,38 +161,57 @@ export default function AssetDetail() {
 
         {/* Info card */}
         <motion.div
-          className="rounded-2xl bg-card card-shadow divide-y divide-border"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          className="rounded-[18px] bg-background divide-y divide-border/60 overflow-hidden"
+          style={{
+            boxShadow: '0 0 0 1px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.03), 0 4px 14px rgba(0,0,0,0.04)',
+          }}
+          {...fadeUp}
           transition={{ delay: 0.25, duration: 0.35 }}
         >
-          <InfoRow label="价格" value={`¥${asset.price.toLocaleString('zh-CN', { minimumFractionDigits: 1 })}`} />
-          <InfoRow label="类别" value={asset.category} />
-          <InfoRow label="购买日期" value={purchaseDateFormatted} />
+          <InfoRow
+            icon={<DollarSign size={15} className="text-primary" />}
+            iconBg="bg-accent"
+            label="购入价格"
+            value={`¥${asset.price.toLocaleString('zh-CN')}`}
+          />
+          <InfoRow
+            icon={<Tag size={15} className="text-primary" />}
+            iconBg="bg-accent"
+            label="类别"
+            value={asset.category}
+          />
+          <InfoRow
+            icon={<Calendar size={15} className="text-primary" />}
+            iconBg="bg-accent"
+            label="购买日期"
+            value={purchaseDateFormatted}
+          />
         </motion.div>
 
         {/* Delete button */}
         <motion.button
           onClick={handleDelete}
-          className="w-full flex items-center justify-center gap-2 rounded-2xl bg-card card-shadow py-4 text-foreground font-medium"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          className="w-full flex items-center justify-center gap-2 rounded-[18px] bg-destructive/8 py-3.5 text-destructive text-[14px] font-medium transition-colors hover:bg-destructive/12"
+          {...fadeUp}
           transition={{ delay: 0.35, duration: 0.35 }}
           whileTap={{ scale: 0.98 }}
         >
-          <Trash2 size={18} strokeWidth={1.5} />
-          <span>删除</span>
+          <Trash2 size={16} strokeWidth={1.8} />
+          <span>删除资产</span>
         </motion.button>
       </div>
     </motion.div>
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function InfoRow({ icon, iconBg, label, value }: { icon: React.ReactNode; iconBg: string; label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between px-5 py-4">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-sm font-medium text-foreground">{value}</span>
+    <div className="flex items-center gap-3 px-4 py-3.5">
+      <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${iconBg}`}>
+        {icon}
+      </span>
+      <span className="flex-1 text-[14px] text-muted-foreground">{label}</span>
+      <span className="text-[14px] font-medium text-foreground">{value}</span>
     </div>
   );
 }
