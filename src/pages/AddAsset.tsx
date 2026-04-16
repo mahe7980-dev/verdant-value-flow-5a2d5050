@@ -83,6 +83,7 @@ function EmojiPicker({ selected, onSelect, onClose }: { selected: string; onSele
 
 export default function AddAsset() {
   const navigate = useNavigate();
+  const { currencySymbol } = useSettings();
   const [name, setName] = useState('');
   const [emoji, setEmoji] = useState('📦');
   const [price, setPrice] = useState('');
