@@ -17,51 +17,60 @@ export default function TabBar() {
     <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5">
       {/* iOS 26 liquid glass tab bar */}
       <div
-        className="flex items-center gap-1 px-1.5 py-1.5 rounded-[26px]"
+        className="relative flex items-center gap-0.5 px-1 py-1 rounded-full overflow-hidden"
         style={{
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.3) 100%)',
-          backdropFilter: 'saturate(200%) blur(40px)',
-          WebkitBackdropFilter: 'saturate(200%) blur(40px)',
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%)',
+          backdropFilter: 'saturate(180%) blur(60px)',
+          WebkitBackdropFilter: 'saturate(180%) blur(60px)',
           boxShadow: `
-            0 0 0 0.5px rgba(255,255,255,0.5),
-            inset 0 1px 0 rgba(255,255,255,0.6),
-            inset 0 -0.5px 0 rgba(0,0,0,0.04),
-            0 4px 16px rgba(0,0,0,0.08),
-            0 12px 40px rgba(0,0,0,0.06)
+            inset 0 0.5px 0 0 rgba(255,255,255,0.45),
+            inset 0 -0.5px 0 0 rgba(0,0,0,0.05),
+            0 0 0 0.33px rgba(255,255,255,0.25),
+            0 0.5px 2px rgba(0,0,0,0.04),
+            0 4px 16px rgba(0,0,0,0.06),
+            0 12px 48px rgba(0,0,0,0.04)
           `,
         }}
       >
+        {/* Top specular edge — simulates light refracting through glass */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-[1px]"
+          style={{
+            background: 'linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.5) 50%, transparent 90%)',
+          }}
+        />
+
         {tabs.map((tab) => {
           const isActive = pathname === tab.path;
           return (
             <button
               key={tab.path}
               onClick={() => navigate(tab.path)}
-              className="relative flex items-center justify-center gap-1.5 transition-all"
+              className="relative flex items-center justify-center gap-1.5 transition-all duration-300 ease-out"
               style={{
-                padding: isActive ? '8px 18px' : '8px 14px',
-                borderRadius: '20px',
+                padding: isActive ? '10px 20px' : '10px 16px',
+                borderRadius: '100px',
                 ...(isActive
                   ? {
-                      background: 'linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.45) 100%)',
+                      background: 'linear-gradient(180deg, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.18) 100%)',
                       boxShadow: `
-                        0 0 0 0.5px rgba(255,255,255,0.6),
-                        inset 0 1px 0 rgba(255,255,255,0.8),
-                        0 2px 8px rgba(0,0,0,0.06)
+                        inset 0 0.5px 0 rgba(255,255,255,0.55),
+                        0 0 0 0.33px rgba(255,255,255,0.2),
+                        0 1px 4px rgba(0,0,0,0.04)
                       `,
                     }
                   : {}),
               }}
             >
               <tab.icon
-                size={18}
-                strokeWidth={isActive ? 2.2 : 1.5}
-                className={`transition-colors ${
-                  isActive ? 'text-foreground' : 'text-muted-foreground/60'
+                size={19}
+                strokeWidth={isActive ? 2 : 1.5}
+                className={`transition-all duration-300 ${
+                  isActive ? 'text-foreground' : 'text-foreground/40'
                 }`}
               />
               {isActive && (
-                <span className="text-[13px] font-semibold text-foreground leading-none">
+                <span className="text-[13px] font-semibold text-foreground leading-none animate-in fade-in slide-in-from-left-1 duration-200">
                   {tab.label}
                 </span>
               )}
@@ -70,22 +79,30 @@ export default function TabBar() {
         })}
       </div>
 
-      {/* Add button */}
+      {/* Floating add button — dark glass */}
       <button
         onClick={() => navigate('/add')}
-        className="flex h-[48px] w-[48px] items-center justify-center rounded-full transition-transform active:scale-95"
+        className="relative flex h-[46px] w-[46px] items-center justify-center rounded-full overflow-hidden transition-transform active:scale-95"
         style={{
-          background: 'linear-gradient(180deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.8) 100%)',
-          backdropFilter: 'saturate(200%) blur(40px)',
-          WebkitBackdropFilter: 'saturate(200%) blur(40px)',
+          background: 'linear-gradient(180deg, rgba(30,30,30,0.7) 0%, rgba(10,10,10,0.85) 100%)',
+          backdropFilter: 'saturate(180%) blur(60px)',
+          WebkitBackdropFilter: 'saturate(180%) blur(60px)',
           boxShadow: `
-            0 0 0 0.5px rgba(255,255,255,0.12),
-            inset 0 1px 0 rgba(255,255,255,0.15),
-            0 4px 16px rgba(0,0,0,0.12),
-            0 8px 32px rgba(0,0,0,0.08)
+            inset 0 0.5px 0 rgba(255,255,255,0.12),
+            inset 0 -0.5px 0 rgba(0,0,0,0.2),
+            0 0 0 0.33px rgba(255,255,255,0.08),
+            0 4px 16px rgba(0,0,0,0.1),
+            0 8px 32px rgba(0,0,0,0.06)
           `,
         }}
       >
+        {/* Inner specular highlight */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-[1px]"
+          style={{
+            background: 'linear-gradient(90deg, transparent 20%, rgba(255,255,255,0.15) 50%, transparent 80%)',
+          }}
+        />
         <Plus size={20} className="text-white" strokeWidth={2.5} />
       </button>
     </div>
