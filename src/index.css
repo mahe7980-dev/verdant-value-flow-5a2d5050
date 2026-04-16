@@ -4,7 +4,6 @@
 
 @layer base {
   :root {
-    /* Airbnb-inspired warm palette */
     --background: 0 0% 100%;
     --foreground: 0 0% 13%;
 
@@ -47,6 +46,48 @@
     --sidebar-border: 0 0% 92%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  .dark {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 93%;
+
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 93%;
+
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 93%;
+
+    --primary: 145 45% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 93%;
+
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 55%;
+
+    --accent: 145 30% 14%;
+    --accent-foreground: 145 45% 70%;
+
+    --destructive: 3 72% 52%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 145 45% 52%;
+
+    --gradient-green-start: 145 45% 40%;
+    --gradient-green-end: 165 40% 35%;
+
+    --sidebar-background: 0 0% 9%;
+    --sidebar-foreground: 0 0% 93%;
+    --sidebar-primary: 0 0% 93%;
+    --sidebar-primary-foreground: 0 0% 9%;
+    --sidebar-accent: 0 0% 14%;
+    --sidebar-accent-foreground: 0 0% 93%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
 }
 
 @layer base {
@@ -66,12 +107,17 @@
     background: linear-gradient(135deg, hsl(var(--gradient-green-start)), hsl(var(--gradient-green-end)));
   }
 
-  /* Airbnb three-layer shadow system */
   .card-shadow {
     box-shadow:
       0 0 0 1px rgba(0, 0, 0, 0.04),
       0 1px 6px rgba(0, 0, 0, 0.04),
       0 6px 16px rgba(0, 0, 0, 0.06);
+  }
+  .dark .card-shadow {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 1px 6px rgba(0, 0, 0, 0.2),
+      0 6px 16px rgba(0, 0, 0, 0.3);
   }
   .card-shadow-hover {
     box-shadow:
