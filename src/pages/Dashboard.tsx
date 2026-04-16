@@ -10,7 +10,7 @@ type Filter = "all" | AssetStatus;
 export default function Dashboard() {
   const assets = useMemo(() => getAssets(), []);
   const [filter, setFilter] = useState<Filter>("all");
-  const { formatPrice, formatDailyCost, durationSuffix } = useSettings();
+  const { formatPrice, formatDailyCost, durationSuffix, currencySymbol, settings } = useSettings();
 
   const total = getTotalValue(assets);
   const dailyCost = getOverallDailyCost(assets);
