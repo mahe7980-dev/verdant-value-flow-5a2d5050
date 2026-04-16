@@ -84,7 +84,7 @@ export default function AssetDetail() {
         </p>
       </div>
 
-      <div className="px-5 space-y-3">
+      <div className="relative px-5 space-y-3">
         {/* Chart card */}
         <motion.div
           className="rounded-2xl bg-card card-shadow p-5"
