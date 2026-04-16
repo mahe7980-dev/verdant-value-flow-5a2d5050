@@ -54,7 +54,7 @@ export default function AssetDetail() {
       </div>
 
       {/* Hero — centered */}
-      <div className="flex flex-col items-center mt-6 mb-8 px-5">
+      <div className="relative flex flex-col items-center mt-6 mb-8 px-5">
         <motion.div
           layoutId={`asset-emoji-${asset.id}`}
           className="flex h-20 w-20 items-center justify-center rounded-2xl bg-accent mb-4"
