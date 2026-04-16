@@ -19,13 +19,13 @@ export default function AssetCard({ asset }: { asset: Asset }) {
       layoutId={`asset-bg-${asset.id}`}
       onClick={() => navigate(`/asset/${asset.id}`)}
       className="w-full rounded-2xl bg-card card-shadow p-4 text-left card-press flex flex-col"
-      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
     >
       <div className="flex items-start justify-between mb-3">
         <motion.div
           layoutId={`asset-emoji-${asset.id}`}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
         >
           <span className="text-xl">{emoji}</span>
         </motion.div>
@@ -38,7 +38,7 @@ export default function AssetCard({ asset }: { asset: Asset }) {
       <motion.span
         layoutId={`asset-name-${asset.id}`}
         className="font-semibold text-[13px] leading-tight truncate text-foreground"
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
       >
         {asset.name}
       </motion.span>
@@ -48,7 +48,7 @@ export default function AssetCard({ asset }: { asset: Asset }) {
       <motion.span
         layoutId={`asset-daily-${asset.id}`}
         className="text-lg font-bold text-foreground mt-2.5 leading-none"
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
       >
         ¥{daily.toFixed(2)}
         <span className="text-[11px] font-normal text-muted-foreground">/天</span>

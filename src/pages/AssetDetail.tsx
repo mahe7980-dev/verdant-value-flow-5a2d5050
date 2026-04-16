@@ -33,7 +33,7 @@ export default function AssetDetail() {
     <motion.div
       layoutId={`asset-bg-${asset.id}`}
       className="min-h-screen pb-28 bg-card"
-      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
     >
       {/* Top bar */}
       <div className="px-5 pt-14 flex items-center justify-between">
@@ -53,21 +53,21 @@ export default function AssetDetail() {
         <motion.div
           layoutId={`asset-emoji-${asset.id}`}
           className="flex h-20 w-20 items-center justify-center rounded-2xl bg-accent mb-4"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
         >
           <span className="text-4xl">{emoji}</span>
         </motion.div>
         <motion.h1
           layoutId={`asset-name-${asset.id}`}
           className="text-xl font-bold text-foreground text-center"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
         >
           {asset.name}
         </motion.h1>
         <motion.p
           layoutId={`asset-daily-${asset.id}`}
           className="text-[32px] font-bold text-foreground mt-2 leading-none"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
         >
           ¥{daily.toFixed(1)}
           <span className="text-base font-normal text-muted-foreground">/天</span>
