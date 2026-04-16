@@ -3,10 +3,12 @@ export type AssetStatus = 'active' | 'retired' | 'sold';
 export interface Asset {
   id: string;
   name: string;
+  emoji: string;
   price: number;
   purchaseDate: string; // ISO date
   status: AssetStatus;
   category: string;
+  notes?: string;
 }
 
 const STORAGE_KEY = 'youshuu_assets';
