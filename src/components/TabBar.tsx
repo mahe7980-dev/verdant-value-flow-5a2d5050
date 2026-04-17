@@ -27,13 +27,22 @@ export default function TabBar() {
     return () => observer.disconnect();
   }, []);
 
+  // Reset scroll-driven collapse on every route change so each page starts expanded.
+  useEffect(() => {
+    setScrolled(false);
+    setForceExpanded(false);
+  }, [pathname]);
+
   useEffect(() => {
     let lastY = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
-      // Collapse only after scrolling past 2 viewport heights
+      // Only collapse on the home page; other pages always keep the full TabBar visible.
+      if (pathname !== '/') {
+        setScrolled(false);
+        return;
+      }
       setScrolled(y > window.innerHeight * 0.6);
-      // Any user-driven scroll movement cancels the force-expand override
       if (Math.abs(y - lastY) > 2) setForceExpanded(false);
       lastY = y;
     };
