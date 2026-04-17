@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ChevronRight, Sun, Moon, Check } from 'lucide-react';
+import { ChevronRight, Sun, Moon, Check, LayoutGrid, List, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useSettings, CURRENCY_MAP, DURATION_MAP, type CurrencyCode, type DurationUnit, type ThemeMode } from '@/lib/settings';
+import { useSettings, CURRENCY_MAP, DURATION_MAP, type CurrencyCode, type DurationUnit, type ThemeMode, type ViewMode } from '@/lib/settings';
 
 interface SettingItemProps {
   icon: React.ReactNode;
@@ -163,6 +163,36 @@ export default function SettingsPage() {
       {/* 显示与外观 */}
       <SectionTitle>显示与外观</SectionTitle>
       <div className="mx-4 rounded-[18px] bg-card divide-y divide-border/60 overflow-hidden" style={cardStyle}>
+        {/* 视图模式分段选择器 */}
+        <div className="px-4 py-3.5">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg text-base bg-emerald-50 dark:bg-emerald-950/30">
+              🗂️
+            </span>
+            <span className="flex-1 text-left text-[14px] font-medium text-foreground">显示模式</span>
+          </div>
+          <div className="flex items-center gap-1 rounded-2xl bg-secondary p-1">
+            {([
+              { value: 'card', label: '卡片', icon: <LayoutGrid size={13} strokeWidth={2.2} /> },
+              { value: 'list', label: '列表', icon: <List size={13} strokeWidth={2.2} /> },
+              { value: 'sticker', label: '贴纸', icon: <Sparkles size={13} strokeWidth={2.2} /> },
+            ] as { value: ViewMode; label: string; icon: React.ReactNode }[]).map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => updateSettings({ viewMode: opt.value })}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[12.5px] font-medium transition-all ${
+                  settings.viewMode === opt.value
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                {opt.icon}
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <button
           onClick={toggleTheme}
           className="flex w-full items-center gap-3 px-4 py-3.5 transition-colors active:bg-muted/30"

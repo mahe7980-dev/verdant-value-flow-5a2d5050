@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, Calendar, LayoutGrid, DollarSign, FileText } from 'lucide-react';
+import { X, ChevronRight, Calendar, LayoutGrid, DollarSign, FileText, User } from 'lucide-react';
 import { useSettings } from '@/lib/settings';
-import { addAsset, CATEGORIES, CATEGORY_EMOJI } from '@/lib/assets';
+import { addAsset, CATEGORIES, CATEGORY_EMOJI, OWNERS, type Owner } from '@/lib/assets';
 
 const EMOJI_LIST = [
   '📱', '💻', '🖥️', '⌨️', '🖱️', '🎧', '📷', '📹', '🎮', '🕹️', '📺', '🔊', '⌚', '🔌', '💾', '🖨️', '📡', '🔋', '💡', '📻',
@@ -89,6 +89,7 @@ export default function AddAsset() {
   const [price, setPrice] = useState('');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [category, setCategory] = useState(CATEGORIES[0]);
+  const [owner, setOwner] = useState<Owner>('我的');
   const [notes, setNotes] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -108,6 +109,7 @@ export default function AddAsset() {
       purchaseDate: date,
       status: 'active',
       category,
+      owner,
       notes: notes.trim() || undefined,
     });
     navigate('/');
