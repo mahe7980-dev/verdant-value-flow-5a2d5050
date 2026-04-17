@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, TrendingDown } from "lucide-react";
-import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus, OWNERS, type Owner } from "@/lib/assets";
+import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus, getOwners, type Owner } from "@/lib/assets";
 import { useSettings } from "@/lib/settings";
 import AssetCard from "@/components/AssetCard";
 import AssetListItem from "@/components/AssetListItem";
