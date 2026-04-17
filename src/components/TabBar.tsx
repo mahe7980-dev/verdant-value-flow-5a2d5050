@@ -130,8 +130,8 @@ export default function TabBar() {
             style={{
               filter: 'url(#liquid-goo)',
               // give the filter room so blurred edges aren't clipped
-              padding: '12px 16px',
-              margin: '-12px -16px',
+              padding: '20px 24px',
+              margin: '-20px -24px',
             }}
           >
             <AnimatePresence initial={false} mode="popLayout">
