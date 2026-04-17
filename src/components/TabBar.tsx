@@ -1,5 +1,6 @@
 import { Home, PieChart, Settings, Plus } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const tabs = [
   { path: '/', icon: Home, label: '首页' },
@@ -10,8 +11,18 @@ const tabs = [
 export default function TabBar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [sheetOpen, setSheetOpen] = useState(false);
 
-  if (pathname === '/add') return null;
+  // Watch body[data-sheet-open] so we hide the TabBar when any bottom sheet is open
+  useEffect(() => {
+    const update = () => setSheetOpen(document.body.dataset.sheetOpen === 'true');
+    update();
+    const observer = new MutationObserver(update);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['data-sheet-open'] });
+    return () => observer.disconnect();
+  }, []);
+
+  if (pathname === '/add' || sheetOpen) return null;
 
   return (
     <div className="fixed left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5" style={{ bottom: 'max(env(safe-area-inset-bottom, 0px) + 20px, 20px)' }}>

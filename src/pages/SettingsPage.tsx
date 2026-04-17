@@ -170,6 +170,18 @@ export default function SettingsPage() {
 
   const [picker, setPicker] = useState<'currency' | 'duration' | 'decimal' | 'viewMode' | null>(null);
 
+  // Hide global TabBar while a picker sheet is open
+  useEffect(() => {
+    if (picker) {
+      document.body.dataset.sheetOpen = 'true';
+    } else {
+      delete document.body.dataset.sheetOpen;
+    }
+    return () => {
+      delete document.body.dataset.sheetOpen;
+    };
+  }, [picker]);
+
   const handleReset = () => {
     if (confirm('确定要清除所有数据吗？')) {
       localStorage.removeItem('youshuu_assets');
