@@ -201,19 +201,31 @@ function ChoiceSheet({
 
 export default function AddAsset() {
   const navigate = useNavigate();
+  const { id: editId } = useParams();
+  const isEditMode = Boolean(editId);
   const { currencySymbol } = useSettings();
-  const [name, setName] = useState('');
-  const [emoji, setEmoji] = useState('📦');
-  const [price, setPrice] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+
+  // Load existing asset for edit mode
+  const existing = isEditMode ? getAssetById(editId!) : undefined;
+
+  const [name, setName] = useState(existing?.name ?? '');
+  const [emoji, setEmoji] = useState(existing?.emoji ?? '📦');
+  const [price, setPrice] = useState(existing ? String(existing.price) : '');
+  const [date, setDate] = useState(existing?.purchaseDate ?? new Date().toISOString().slice(0, 10));
+  const [status] = useState<AssetStatus>(existing?.status ?? 'active');
   const [categories, setCategories] = useState<string[]>(() => getAllCategories());
-  const [category, setCategory] = useState(categories[0] || '其他');
+  const [category, setCategory] = useState(existing?.category ?? categories[0] ?? '其他');
   const [owners, setOwners] = useState<Owner[]>(() => getOwners());
-  const [owner, setOwner] = useState<Owner | undefined>(undefined);
-  const [notes, setNotes] = useState('');
+  const [owner, setOwner] = useState<Owner | undefined>(existing?.owner);
+  const [notes, setNotes] = useState(existing?.notes ?? '');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showCatPicker, setShowCatPicker] = useState(false);
   const [showOwnerPicker, setShowOwnerPicker] = useState(false);
+
+  // Edit mode: redirect home if asset not found
+  useEffect(() => {
+    if (isEditMode && !existing) navigate('/', { replace: true });
+  }, [isEditMode, existing, navigate]);
 
   const canSubmit = name.trim() && parseFloat(price) > 0;
 
@@ -224,17 +236,23 @@ export default function AddAsset() {
 
   const handleSubmit = () => {
     if (!canSubmit) return;
-    addAsset({
+    const payload = {
       name: name.trim(),
       emoji,
       price: parseFloat(price),
       purchaseDate: date,
-      status: 'active',
+      status,
       category,
       owner: owner || undefined,
       notes: notes.trim() || undefined,
-    });
-    navigate('/');
+    };
+    if (isEditMode && editId) {
+      updateAsset(editId, payload);
+      navigate(`/asset/${editId}`);
+    } else {
+      addAsset(payload);
+      navigate('/');
+    }
   };
 
   return (
@@ -247,7 +265,7 @@ export default function AddAsset() {
         >
           <X size={16} strokeWidth={2.5} />
         </button>
-        <h2 className="text-[15px] font-semibold text-foreground">添加资产</h2>
+        <h2 className="text-[15px] font-semibold text-foreground">{isEditMode ? '编辑资产' : '添加资产'}</h2>
         <div className="w-9" />
       </div>
 
