@@ -122,24 +122,17 @@ export default function TabBar() {
       <LayoutGroup id="tabbar">
         <motion.div
           className="fixed left-0 right-0 z-50 flex justify-center pointer-events-none"
-          style={{ bottom: 'max(env(safe-area-inset-bottom, 0px) + 20px, 20px)' }}
+          style={{ bottom: 'max(env(safe-area-inset-bottom, 0px) + 32px, 32px)' }}
         >
-          {/* Goo container — children inside merge liquidly */}
-          <div
-            className="relative flex items-center pointer-events-auto"
-            style={{
-              filter: 'url(#liquid-goo)',
-              // give the filter room so blurred edges aren't clipped
-              padding: '12px 16px',
-              margin: '-12px -16px',
-            }}
-          >
+          {/* Container — children sit side-by-side. Goo filter removed because it erases
+              the translucent glass background due to alpha thresholding. */}
+          <div className="relative flex items-center gap-2 pointer-events-auto">
             <AnimatePresence initial={false} mode="popLayout">
               {!collapsed ? (
                 <motion.div
                   key="pill"
                   layoutId="glass-pill"
-                  className="relative flex items-center px-1 mr-2 overflow-hidden"
+                  className="relative flex items-center px-1 overflow-hidden"
                   style={{
                     height: ICON_SIZE,
                     borderRadius: ICON_SIZE / 2,
@@ -204,7 +197,7 @@ export default function TabBar() {
                   onClick={handleHome}
                   aria-label="首页"
                   whileTap={{ scale: 0.9 }}
-                  className="relative flex items-center justify-center overflow-hidden mr-[200px]"
+                  className="relative flex items-center justify-center overflow-hidden mr-[180px]"
                   style={{
                     height: ICON_SIZE,
                     width: ICON_SIZE,
