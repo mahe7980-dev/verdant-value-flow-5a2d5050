@@ -255,3 +255,40 @@ function StatusLabel({ label, count, color }: { label: string; count: number; co
     </div>
   );
 }
+
+function FilterRow<T extends string>({
+  label,
+  tabs,
+  value,
+  onChange,
+  renderLabel,
+  className = "",
+}: {
+  label: string;
+  tabs: T[];
+  value: T;
+  onChange: (v: T) => void;
+  renderLabel: (v: T) => string;
+  className?: string;
+}) {
+  return (
+    <div className={`flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide ${className}`}>
+      <span className="shrink-0 text-[11px] font-medium text-muted-foreground/70 pr-0.5 tracking-wide">
+        {label}
+      </span>
+      {tabs.map((t) => (
+        <button
+          key={t}
+          onClick={() => onChange(t)}
+          className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-medium transition-all ${
+            value === t
+              ? "bg-primary/10 text-primary ring-1 ring-primary/20"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {renderLabel(t)}
+        </button>
+      ))}
+    </div>
+  );
+}
