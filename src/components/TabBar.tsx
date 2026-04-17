@@ -122,7 +122,7 @@ export default function TabBar() {
       <LayoutGroup id="tabbar">
         <motion.div
           className="fixed left-0 right-0 z-50 flex justify-center pointer-events-none"
-          style={{ bottom: 'max(env(safe-area-inset-bottom, 0px) + 20px, 20px)' }}
+          style={{ bottom: 'max(env(safe-area-inset-bottom, 0px) + 32px, 32px)' }}
         >
           {/* Goo container — children inside merge liquidly */}
           <div
