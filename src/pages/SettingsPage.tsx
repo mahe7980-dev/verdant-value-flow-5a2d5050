@@ -126,7 +126,7 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const { settings, updateSettings } = useSettings();
 
-  const [picker, setPicker] = useState<'currency' | 'duration' | 'decimal' | null>(null);
+  const [picker, setPicker] = useState<'currency' | 'duration' | 'decimal' | 'viewMode' | null>(null);
 
   const handleReset = () => {
     if (confirm('确定要清除所有数据吗？')) {
