@@ -197,7 +197,7 @@ export default function TabBar() {
                   onClick={handleHome}
                   aria-label="首页"
                   whileTap={{ scale: 0.9 }}
-                  className="relative flex items-center justify-center overflow-hidden mr-[200px]"
+                  className="relative flex items-center justify-center overflow-hidden mr-[180px]"
                   style={{
                     height: ICON_SIZE,
                     width: ICON_SIZE,
