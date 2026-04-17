@@ -125,7 +125,7 @@ export default function TabBar() {
             }}
           >
             <AnimatePresence initial={false} mode="popLayout">
-              {!scrolled ? (
+              {!collapsed ? (
                 <motion.div
                   key="pill"
                   layoutId="glass-pill"
