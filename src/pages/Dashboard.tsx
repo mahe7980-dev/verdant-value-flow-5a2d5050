@@ -9,11 +9,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type Filter = "all" | AssetStatus;
 type OwnerFilter = "all" | Owner;
+type CategoryFilter = "all" | string;
 
 export default function Dashboard() {
   const assets = useMemo(() => getAssets(), []);
   const [filter, setFilter] = useState<Filter>("all");
   const [ownerFilter, setOwnerFilter] = useState<OwnerFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const { formatPrice, formatDailyCost, durationSuffix, currencySymbol, settings } = useSettings();
   const viewMode = settings.viewMode;
 
@@ -34,9 +36,17 @@ export default function Dashboard() {
   const ownerTabs: OwnerFilter[] = ["all", ...orderedOwners];
   const ownerLabel = (o: OwnerFilter) => (o === "all" ? "全部" : o);
 
+  // Categories actually used by current assets, preserving first-seen order.
+  const presentCategories = Array.from(
+    new Set(assets.map(a => a.category).filter(Boolean))
+  ) as string[];
+  const categoryTabs: CategoryFilter[] = ["all", ...presentCategories];
+  const categoryLabel = (c: CategoryFilter) => (c === "all" ? "全部" : c);
+
   const filtered = assets.filter(a => {
     if (filter !== "all" && a.status !== filter) return false;
     if (ownerFilter !== "all" && a.owner !== ownerFilter) return false;
+    if (categoryFilter !== "all" && a.category !== categoryFilter) return false;
     return true;
   });
 
