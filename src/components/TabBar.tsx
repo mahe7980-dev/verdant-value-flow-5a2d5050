@@ -33,15 +33,19 @@ export default function TabBar() {
 
   if (pathname === '/add' || sheetOpen) return null;
 
-  const ICON_SIZE = 44; // 44pt corner buttons
-  const isActiveHome = pathname === '/';
+  const ICON_SIZE = 54; // 54pt buttons / pill height
 
   // Collapsed state — only Home (bottom-left) and Add (bottom-right), weakened
   if (scrolled) {
+    const handleHomeClick = () => {
+      // Scroll back to top to restore the full TabBar
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (pathname !== '/') navigate('/');
+    };
     return (
       <>
         <button
-          onClick={() => navigate('/')}
+          onClick={handleHomeClick}
           aria-label="首页"
           className="fixed z-50 flex items-center justify-center rounded-full overflow-hidden transition-all active:scale-95"
           style={{
