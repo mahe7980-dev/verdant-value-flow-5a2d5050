@@ -26,7 +26,12 @@ export default function Dashboard() {
   const totalCount = assets.length;
 
   const presentOwners = Array.from(new Set(assets.map(a => a.owner).filter(Boolean))) as Owner[];
-  const ownerTabs: OwnerFilter[] = ["all", ...OWNERS.filter(o => presentOwners.includes(o))];
+  const knownOwners = getOwners();
+  const orderedOwners = [
+    ...knownOwners.filter(o => presentOwners.includes(o)),
+    ...presentOwners.filter(o => !knownOwners.includes(o)),
+  ];
+  const ownerTabs: OwnerFilter[] = ["all", ...orderedOwners];
   const ownerLabel = (o: OwnerFilter) => (o === "all" ? "全部" : o);
 
   const filtered = assets.filter(a => {
