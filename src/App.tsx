@@ -23,6 +23,7 @@ function AnimatedRoutes() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/asset/:id" element={<AssetDetail />} />
         <Route path="/add" element={<AddAsset />} />
+        <Route path="/edit/:id" element={<AddAsset />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<NotFound />} />
