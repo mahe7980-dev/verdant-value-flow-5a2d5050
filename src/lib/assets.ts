@@ -53,6 +53,19 @@ export function deleteAsset(id: string) {
   saveAssets(assets);
 }
 
+export function updateAsset(id: string, patch: Partial<Omit<Asset, 'id'>>) {
+  const assets = getAssets();
+  const idx = assets.findIndex(a => a.id === id);
+  if (idx === -1) return null;
+  assets[idx] = { ...assets[idx], ...patch };
+  saveAssets(assets);
+  return assets[idx];
+}
+
+export function getAssetById(id: string): Asset | undefined {
+  return getAssets().find(a => a.id === id);
+}
+
 // ---------- Owners (user-managed) ----------
 export function getOwners(): Owner[] {
   try {
