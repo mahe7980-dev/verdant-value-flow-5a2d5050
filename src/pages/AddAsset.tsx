@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, Calendar, LayoutGrid, DollarSign, FileText } from 'lucide-react';
+import { X, ChevronRight, Calendar, LayoutGrid, DollarSign, FileText, User } from 'lucide-react';
 import { useSettings } from '@/lib/settings';
-import { addAsset, CATEGORIES, CATEGORY_EMOJI } from '@/lib/assets';
+import { addAsset, CATEGORIES, CATEGORY_EMOJI, OWNERS, type Owner } from '@/lib/assets';
 
 const EMOJI_LIST = [
   '📱', '💻', '🖥️', '⌨️', '🖱️', '🎧', '📷', '📹', '🎮', '🕹️', '📺', '🔊', '⌚', '🔌', '💾', '🖨️', '📡', '🔋', '💡', '📻',
@@ -89,6 +89,7 @@ export default function AddAsset() {
   const [price, setPrice] = useState('');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [category, setCategory] = useState(CATEGORIES[0]);
+  const [owner, setOwner] = useState<Owner>('我的');
   const [notes, setNotes] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -108,6 +109,7 @@ export default function AddAsset() {
       purchaseDate: date,
       status: 'active',
       category,
+      owner,
       notes: notes.trim() || undefined,
     });
     navigate('/');
@@ -202,6 +204,24 @@ export default function AddAsset() {
               >
                 {CATEGORIES.map(c => (
                   <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <ChevronRight size={14} className="text-muted-foreground/40" />
+          </div>
+          <div className="flex items-center gap-3 px-4 py-3.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pink-50">
+              <User size={15} className="text-pink-500" strokeWidth={2} />
+            </span>
+            <span className="text-[14px] font-medium text-foreground">持有人</span>
+            <div className="flex-1 flex justify-end">
+              <select
+                value={owner}
+                onChange={e => setOwner(e.target.value as Owner)}
+                className="text-[13px] text-muted-foreground bg-transparent outline-none appearance-none text-right pr-1 cursor-pointer"
+              >
+                {OWNERS.map(o => (
+                  <option key={o} value={o}>{o}</option>
                 ))}
               </select>
             </div>

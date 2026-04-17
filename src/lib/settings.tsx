@@ -3,12 +3,14 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 export type CurrencyCode = 'CNY' | 'USD' | 'EUR' | 'GBP' | 'JPY' | 'HKD';
 export type DurationUnit = 'day' | 'week' | 'month' | 'year';
 export type ThemeMode = 'light' | 'dark';
+export type ViewMode = 'card' | 'list' | 'sticker';
 
 export interface AppSettings {
   currency: CurrencyCode;
   durationUnit: DurationUnit;
   decimalPlaces: number; // 0-3
   theme: ThemeMode;
+  viewMode: ViewMode;
 }
 
 const CURRENCY_MAP: Record<CurrencyCode, { symbol: string; label: string }> = {
@@ -36,6 +38,7 @@ const defaultSettings: AppSettings = {
   durationUnit: 'day',
   decimalPlaces: 1,
   theme: 'light',
+  viewMode: 'card',
 };
 
 interface SettingsContextType {

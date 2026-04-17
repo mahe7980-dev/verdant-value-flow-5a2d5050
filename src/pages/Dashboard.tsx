@@ -1,16 +1,21 @@
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, TrendingDown } from "lucide-react";
-import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus } from "@/lib/assets";
+import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus, OWNERS, type Owner } from "@/lib/assets";
 import { useSettings } from "@/lib/settings";
 import AssetCard from "@/components/AssetCard";
+import AssetListItem from "@/components/AssetListItem";
+import AssetSticker from "@/components/AssetSticker";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Filter = "all" | AssetStatus;
+type OwnerFilter = "all" | Owner;
 
 export default function Dashboard() {
   const assets = useMemo(() => getAssets(), []);
   const [filter, setFilter] = useState<Filter>("all");
+  const [ownerFilter, setOwnerFilter] = useState<OwnerFilter>("all");
   const { formatPrice, formatDailyCost, durationSuffix, currencySymbol, settings } = useSettings();
+  const viewMode = settings.viewMode;
 
   const total = getTotalValue(assets);
   const dailyCost = getOverallDailyCost(assets);
@@ -20,7 +25,15 @@ export default function Dashboard() {
   const soldCount = assets.filter((a) => a.status === "sold").length;
   const totalCount = assets.length;
 
-  const filtered = filter === "all" ? assets : assets.filter((a) => a.status === filter);
+  const presentOwners = Array.from(new Set(assets.map(a => a.owner).filter(Boolean))) as Owner[];
+  const ownerTabs: OwnerFilter[] = ["all", ...OWNERS.filter(o => presentOwners.includes(o))];
+  const ownerLabel = (o: OwnerFilter) => (o === "all" ? "全部" : o);
+
+  const filtered = assets.filter(a => {
+    if (filter !== "all" && a.status !== filter) return false;
+    if (ownerFilter !== "all" && a.owner !== ownerFilter) return false;
+    return true;
+  });
 
   const filters: { key: Filter; label: string; count: number }[] = [
     { key: "all", label: "全部", count: totalCount },
@@ -110,7 +123,27 @@ export default function Dashboard() {
       </div>
 
       <div className="px-5">
-        <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        {/* Owner filter */}
+        {ownerTabs.length > 1 && (
+          <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {ownerTabs.map((o) => (
+              <button
+                key={o}
+                onClick={() => setOwnerFilter(o)}
+                className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-medium transition-all ${
+                  ownerFilter === o
+                    ? "bg-primary/10 text-primary ring-1 ring-primary/20"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {ownerLabel(o)}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Status filter */}
+        <div className={`${ownerTabs.length > 1 ? 'mt-2' : 'mt-6'} flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide`}>
           {filters.map((f) => (
             <button
               key={f.key}
@@ -131,21 +164,56 @@ export default function Dashboard() {
           ))}
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <AnimatePresence>
-            {filtered.map((a, i) => (
-              <motion.div
-                key={a.id}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ delay: i * 0.04, duration: 0.3 }}
-              >
-                <AssetCard asset={a} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+        {/* Asset grid / list / sticker */}
+        {viewMode === 'list' ? (
+          <div className="mt-4 flex flex-col gap-2.5">
+            <AnimatePresence>
+              {filtered.map((a, i) => (
+                <motion.div
+                  key={a.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ delay: i * 0.03, duration: 0.25 }}
+                >
+                  <AssetListItem asset={a} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        ) : viewMode === 'sticker' ? (
+          <div className="mt-4 grid grid-cols-3 gap-y-3 gap-x-2">
+            <AnimatePresence>
+              {filtered.map((a, i) => (
+                <motion.div
+                  key={a.id}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
+                  transition={{ delay: i * 0.03, duration: 0.25, type: 'spring', stiffness: 260, damping: 22 }}
+                >
+                  <AssetSticker asset={a} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        ) : (
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <AnimatePresence>
+              {filtered.map((a, i) => (
+                <motion.div
+                  key={a.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ delay: i * 0.04, duration: 0.3 }}
+                >
+                  <AssetCard asset={a} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
 
         {filtered.length === 0 && (
           <div className="text-center py-20">

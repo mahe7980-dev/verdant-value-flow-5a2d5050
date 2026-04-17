@@ -1,5 +1,8 @@
 export type AssetStatus = 'active' | 'retired' | 'sold';
 
+export const OWNERS = ['我的', '老婆', '老妈', '老爸', '孩子', '共用'] as const;
+export type Owner = typeof OWNERS[number];
+
 export interface Asset {
   id: string;
   name: string;
@@ -8,17 +11,18 @@ export interface Asset {
   purchaseDate: string; // ISO date
   status: AssetStatus;
   category: string;
+  owner?: Owner;
   notes?: string;
 }
 
 const STORAGE_KEY = 'youshuu_assets';
 
 const DEMO_ASSETS: Asset[] = [
-  { id: '1', name: 'MacBook Pro 14"', emoji: '💻', price: 14999, purchaseDate: '2023-06-15', status: 'active', category: '电子产品' },
-  { id: '2', name: 'AirPods Pro 2', emoji: '🎧', price: 1899, purchaseDate: '2024-01-10', status: 'active', category: '电子产品' },
-  { id: '3', name: 'Herman Miller 座椅', emoji: '🪑', price: 8990, purchaseDate: '2022-11-01', status: 'active', category: '家具' },
-  { id: '4', name: 'iPhone 15 Pro', emoji: '📱', price: 9999, purchaseDate: '2023-09-22', status: 'active', category: '电子产品' },
-  { id: '5', name: 'Sony WH-1000XM5', emoji: '🎧', price: 2499, purchaseDate: '2024-03-05', status: 'retired', category: '电子产品' },
+  { id: '1', name: 'MacBook Pro 14"', emoji: '💻', price: 14999, purchaseDate: '2023-06-15', status: 'active', category: '电子产品', owner: '我的' },
+  { id: '2', name: 'AirPods Pro 2', emoji: '🎧', price: 1899, purchaseDate: '2024-01-10', status: 'active', category: '电子产品', owner: '我的' },
+  { id: '3', name: 'Herman Miller 座椅', emoji: '🪑', price: 8990, purchaseDate: '2022-11-01', status: 'active', category: '家具', owner: '共用' },
+  { id: '4', name: 'iPhone 15 Pro', emoji: '📱', price: 9999, purchaseDate: '2023-09-22', status: 'active', category: '电子产品', owner: '老婆' },
+  { id: '5', name: 'Sony WH-1000XM5', emoji: '🎧', price: 2499, purchaseDate: '2024-03-05', status: 'retired', category: '电子产品', owner: '老妈' },
 ];
 
 export function getAssets(): Asset[] {
