@@ -51,7 +51,11 @@ export default function AssetDetail() {
         >
           <ChevronLeft size={18} strokeWidth={2} className="text-foreground" />
         </button>
-        <button className="h-9 w-9 flex items-center justify-center rounded-full bg-secondary/80">
+        <button
+          onClick={() => navigate(`/edit/${asset.id}`)}
+          className="h-9 w-9 flex items-center justify-center rounded-full bg-secondary/80 active:scale-95 transition-transform"
+          aria-label="编辑"
+        >
           <Pencil size={15} strokeWidth={2} className="text-foreground" />
         </button>
       </div>
