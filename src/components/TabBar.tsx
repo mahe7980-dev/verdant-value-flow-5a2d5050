@@ -51,7 +51,7 @@ export default function TabBar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, [pathname]);
 
-  if (pathname === '/add' || pathname.startsWith('/asset/') || sheetOpen) return null;
+  if (pathname === '/add' || pathname.startsWith('/edit/') || pathname.startsWith('/asset/') || sheetOpen) return null;
 
   const collapsed = scrolled && !forceExpanded;
 
