@@ -253,6 +253,15 @@ export default function SettingsPage() {
           onClose={() => setPicker(null)}
         />
       )}
+      {picker === 'viewMode' && (
+        <PickerSheet
+          title="显示模式"
+          options={viewModeOptions}
+          selected={settings.viewMode}
+          onSelect={v => updateSettings({ viewMode: v })}
+          onClose={() => setPicker(null)}
+        />
+      )}
     </div>
   );
 }
