@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { X, ChevronRight, Calendar, LayoutGrid, DollarSign, FileText, User, Plus } from 'lucide-react';
 import { useSettings } from '@/lib/settings';
 import {
   addAsset,
+  updateAsset,
+  getAssetById,
   getAllCategories,
   addCustomCategory,
   getOwners,
@@ -11,6 +13,7 @@ import {
   EMOJI_TO_CATEGORY,
   CATEGORY_EMOJI,
   type Owner,
+  type AssetStatus,
 } from '@/lib/assets';
 
 const EMOJI_CATEGORIES: Record<string, string[]> = {
