@@ -17,6 +17,7 @@ export default function TabBar() {
   const { pathname } = useLocation();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [forceExpanded, setForceExpanded] = useState(false);
 
   useEffect(() => {
     const update = () => setSheetOpen(document.body.dataset.sheetOpen === 'true');
@@ -27,7 +28,14 @@ export default function TabBar() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 80);
+      // Any user-driven scroll movement cancels the force-expand override
+      if (Math.abs(y - lastY) > 2) setForceExpanded(false);
+      lastY = y;
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -35,12 +43,15 @@ export default function TabBar() {
 
   if (pathname === '/add' || sheetOpen) return null;
 
+  const collapsed = scrolled && !forceExpanded;
+
   const handleHome = () => {
-    if (scrolled) {
-      // First tap when collapsed: only expand the TabBar by scrolling to top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (collapsed) {
+      // Collapsed: only expand TabBar, no scroll, no navigation.
+      setForceExpanded(true);
       return;
     }
+    // Expanded on home: no-op (no scroll, no navigate).
     if (pathname !== '/') navigate('/');
   };
 
@@ -114,7 +125,7 @@ export default function TabBar() {
             }}
           >
             <AnimatePresence initial={false} mode="popLayout">
-              {!scrolled ? (
+              {!collapsed ? (
                 <motion.div
                   key="pill"
                   layoutId="glass-pill"
@@ -211,7 +222,7 @@ export default function TabBar() {
                 width: ICON_SIZE,
                 borderRadius: ICON_SIZE / 2,
                 ...darkGlass,
-                opacity: scrolled ? 0.88 : 1,
+                opacity: collapsed ? 0.88 : 1,
               }}
               transition={SPRING}
             >
