@@ -182,7 +182,7 @@ export default function Dashboard() {
             </AnimatePresence>
           </div>
         ) : viewMode === 'sticker' ? (
-          <div className="mt-4 grid grid-cols-3 gap-y-3 gap-x-2">
+          <div className="mt-4 grid grid-cols-2 gap-y-4 gap-x-3">
             <AnimatePresence>
               {filtered.map((a, i) => (
                 <motion.div
