@@ -138,27 +138,32 @@ export default function Dashboard() {
       </div>
 
       <div className="px-5">
-        {/* Owner filter */}
+        {/* Owner filter (renamed: 归属) */}
         {ownerTabs.length > 1 && (
-          <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {ownerTabs.map((o) => (
-              <button
-                key={o}
-                onClick={() => setOwnerFilter(o)}
-                className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-medium transition-all ${
-                  ownerFilter === o
-                    ? "bg-primary/10 text-primary ring-1 ring-primary/20"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {ownerLabel(o)}
-              </button>
-            ))}
-          </div>
+          <FilterRow
+            label="归属"
+            tabs={ownerTabs}
+            value={ownerFilter}
+            onChange={setOwnerFilter}
+            renderLabel={ownerLabel}
+            className="mt-6"
+          />
+        )}
+
+        {/* Category filter */}
+        {categoryTabs.length > 1 && (
+          <FilterRow
+            label="类别"
+            tabs={categoryTabs}
+            value={categoryFilter}
+            onChange={setCategoryFilter}
+            renderLabel={categoryLabel}
+            className={ownerTabs.length > 1 ? "mt-2" : "mt-6"}
+          />
         )}
 
         {/* Status filter */}
-        <div className={`${ownerTabs.length > 1 ? 'mt-2' : 'mt-6'} flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide`}>
+        <div className={`${ownerTabs.length > 1 || categoryTabs.length > 1 ? 'mt-2' : 'mt-6'} flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide`}>
           {filters.map((f) => (
             <button
               key={f.key}
