@@ -301,9 +301,16 @@ export default function AddAsset() {
             <DollarSign size={16} className="text-foreground/70" strokeWidth={1.75} />
             <span className="text-[14px] font-medium text-foreground">价格（{currencySymbol}）</span>
             <input
-              type="number"
+              type="text"
+              inputMode="decimal"
               value={price}
-              onChange={e => setPrice(e.target.value)}
+              onChange={e => {
+                const v = e.target.value.replace(/[^\d.]/g, '');
+                // allow only one dot
+                const parts = v.split('.');
+                const cleaned = parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : v;
+                setPrice(cleaned);
+              }}
               placeholder="0.00"
               className="flex-1 text-right text-[14px] text-foreground font-medium placeholder:text-muted-foreground/30 bg-transparent outline-none"
             />
