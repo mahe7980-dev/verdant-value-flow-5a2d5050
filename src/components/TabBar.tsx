@@ -106,7 +106,7 @@ export default function TabBar() {
       {/* SVG goo filter for liquid merge effect */}
       <svg className="absolute -z-10 h-0 w-0" aria-hidden>
         <defs>
-          <filter id="liquid-goo">
+          <filter id="liquid-goo" x="-20%" y="-50%" width="140%" height="200%">
             <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
             <feColorMatrix
               in="blur"
