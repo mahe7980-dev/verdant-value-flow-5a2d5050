@@ -110,6 +110,18 @@ const decimalOptions: { value: string; label: string }[] = [
   { value: '3', label: '保留 3 位' },
 ];
 
+const viewModeOptions: { value: ViewMode; label: string }[] = [
+  { value: 'card', label: '🗂️ 卡片' },
+  { value: 'list', label: '📋 列表' },
+  { value: 'sticker', label: '✨ 贴纸' },
+];
+
+const viewModeLabel: Record<ViewMode, string> = {
+  card: '卡片',
+  list: '列表',
+  sticker: '贴纸',
+};
+
 export default function SettingsPage() {
   const navigate = useNavigate();
   const { settings, updateSettings } = useSettings();
