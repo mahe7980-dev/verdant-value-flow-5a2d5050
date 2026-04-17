@@ -132,7 +132,7 @@ export default function TabBar() {
                 <motion.div
                   key="pill"
                   layoutId="glass-pill"
-                  className="relative flex items-center px-1 mr-2 overflow-hidden"
+                  className="relative flex items-center px-1 overflow-hidden"
                   style={{
                     height: ICON_SIZE,
                     borderRadius: ICON_SIZE / 2,
