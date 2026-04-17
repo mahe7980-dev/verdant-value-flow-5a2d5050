@@ -36,7 +36,11 @@ export default function TabBar() {
   if (pathname === '/add' || sheetOpen) return null;
 
   const handleHome = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (scrolled) {
+      // First tap when collapsed: only expand the TabBar by scrolling to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     if (pathname !== '/') navigate('/');
   };
 
