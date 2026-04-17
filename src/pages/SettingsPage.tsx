@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ChevronRight, Sun, Moon, Check } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ChevronRight, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings, CURRENCY_MAP, DURATION_MAP, type CurrencyCode, type DurationUnit, type ViewMode } from '@/lib/settings';
 
@@ -50,33 +50,75 @@ function PickerSheet<T extends string>({
   onSelect: (v: T) => void;
   onClose: () => void;
 }) {
+  const [draft, setDraft] = useState<T>(selected);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll selected into center on open
+  useEffect(() => {
+    const el = listRef.current?.querySelector<HTMLButtonElement>(`[data-val="${draft}"]`);
+    el?.scrollIntoView({ block: 'center', behavior: 'instant' as ScrollBehavior });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSave = () => {
+    onSelect(draft);
+    onClose();
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/25 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/20 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="w-full max-w-lg rounded-t-[28px] bg-card pt-3 pb-8 animate-in slide-in-from-bottom duration-300"
+        className="w-full max-w-lg rounded-t-[28px] bg-card pt-3 pb-6 animate-in slide-in-from-bottom duration-300 shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex justify-center mb-3">
-          <div className="h-1 w-10 rounded-full bg-muted-foreground/20" />
+        <div className="flex justify-center mb-4">
+          <div className="h-1 w-10 rounded-full bg-muted-foreground/25" />
         </div>
-        <div className="flex items-center justify-between px-5 mb-4">
-          <div className="w-12" />
-          <span className="text-[15px] font-semibold text-foreground">{title}</span>
-          <button onClick={onClose} className="text-[14px] font-semibold text-primary w-12 text-right">完成</button>
+
+        <h3 className="px-6 text-[17px] font-bold text-foreground mb-2">{title}</h3>
+
+        {/* Wheel-style centered list */}
+        <div
+          ref={listRef}
+          className="relative h-[220px] overflow-y-auto scrollbar-hide py-[88px]"
+          style={{
+            maskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)',
+          }}
+        >
+          {options.map(opt => {
+            const active = draft === opt.value;
+            return (
+              <button
+                key={opt.value}
+                data-val={opt.value}
+                onClick={() => setDraft(opt.value)}
+                className={`block w-full py-2.5 text-center transition-all ${
+                  active
+                    ? 'text-[20px] font-bold text-foreground'
+                    : 'text-[16px] font-medium text-muted-foreground/50'
+                }`}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
         </div>
-        <div className="px-4 space-y-1">
-          {options.map(opt => (
-            <button
-              key={opt.value}
-              onClick={() => { onSelect(opt.value); onClose(); }}
-              className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors ${
-                selected === opt.value ? 'bg-accent' : 'active:bg-muted/30'
-              }`}
-            >
-              <span className="flex-1 text-left text-[15px] font-medium text-foreground">{opt.label}</span>
-              {selected === opt.value && <Check size={18} className="text-primary" strokeWidth={2.5} />}
-            </button>
-          ))}
+
+        {/* Action bar */}
+        <div className="px-5 pt-3 flex items-center gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 h-[52px] rounded-full bg-secondary text-foreground text-[15px] font-semibold active:scale-[0.98] transition-transform"
+          >
+            关闭
+          </button>
+          <button
+            onClick={handleSave}
+            className="flex-[1.2] h-[52px] rounded-full bg-foreground text-background text-[15px] font-semibold active:scale-[0.98] transition-transform"
+          >
+            保存
+          </button>
         </div>
       </div>
     </div>
