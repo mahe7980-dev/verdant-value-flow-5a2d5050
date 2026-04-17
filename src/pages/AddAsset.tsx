@@ -352,7 +352,7 @@ export default function AddAsset() {
             className="w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-secondary/40 transition-colors"
           >
             <User size={16} className="text-foreground/70" strokeWidth={1.75} />
-            <span className="flex-1 text-[14px] font-medium text-foreground">归属人</span>
+            <span className="flex-1 text-[14px] font-medium text-foreground">归属</span>
             <span className="text-[13px] text-muted-foreground">
               {owner || <span className="text-muted-foreground/50">未设置</span>}
             </span>
@@ -430,7 +430,7 @@ export default function AddAsset() {
       {/* Owner picker */}
       {showOwnerPicker && (
         <ChoiceSheet
-          title="选择归属人"
+          title="选择归属"
           options={owners}
           selected={owner}
           onSelect={setOwner}
@@ -438,7 +438,7 @@ export default function AddAsset() {
             addOwner(name);
             setOwners(getOwners());
           }}
-          addLabel="新增归属人"
+          addLabel="新增归属"
           onClose={() => setShowOwnerPicker(false)}
         />
       )}

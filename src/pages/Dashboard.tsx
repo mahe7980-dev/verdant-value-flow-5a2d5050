@@ -9,11 +9,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type Filter = "all" | AssetStatus;
 type OwnerFilter = "all" | Owner;
+type CategoryFilter = "all" | string;
 
 export default function Dashboard() {
   const assets = useMemo(() => getAssets(), []);
   const [filter, setFilter] = useState<Filter>("all");
   const [ownerFilter, setOwnerFilter] = useState<OwnerFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const { formatPrice, formatDailyCost, durationSuffix, currencySymbol, settings } = useSettings();
   const viewMode = settings.viewMode;
 
@@ -34,9 +36,17 @@ export default function Dashboard() {
   const ownerTabs: OwnerFilter[] = ["all", ...orderedOwners];
   const ownerLabel = (o: OwnerFilter) => (o === "all" ? "全部" : o);
 
+  // Categories actually used by current assets, preserving first-seen order.
+  const presentCategories = Array.from(
+    new Set(assets.map(a => a.category).filter(Boolean))
+  ) as string[];
+  const categoryTabs: CategoryFilter[] = ["all", ...presentCategories];
+  const categoryLabel = (c: CategoryFilter) => (c === "all" ? "全部" : c);
+
   const filtered = assets.filter(a => {
     if (filter !== "all" && a.status !== filter) return false;
     if (ownerFilter !== "all" && a.owner !== ownerFilter) return false;
+    if (categoryFilter !== "all" && a.category !== categoryFilter) return false;
     return true;
   });
 
@@ -128,27 +138,32 @@ export default function Dashboard() {
       </div>
 
       <div className="px-5">
-        {/* Owner filter */}
+        {/* Owner filter (renamed: 归属) */}
         {ownerTabs.length > 1 && (
-          <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {ownerTabs.map((o) => (
-              <button
-                key={o}
-                onClick={() => setOwnerFilter(o)}
-                className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-medium transition-all ${
-                  ownerFilter === o
-                    ? "bg-primary/10 text-primary ring-1 ring-primary/20"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {ownerLabel(o)}
-              </button>
-            ))}
-          </div>
+          <FilterRow
+            label="归属"
+            tabs={ownerTabs}
+            value={ownerFilter}
+            onChange={setOwnerFilter}
+            renderLabel={ownerLabel}
+            className="mt-6"
+          />
+        )}
+
+        {/* Category filter */}
+        {categoryTabs.length > 1 && (
+          <FilterRow
+            label="类别"
+            tabs={categoryTabs}
+            value={categoryFilter}
+            onChange={setCategoryFilter}
+            renderLabel={categoryLabel}
+            className={ownerTabs.length > 1 ? "mt-2" : "mt-6"}
+          />
         )}
 
         {/* Status filter */}
-        <div className={`${ownerTabs.length > 1 ? 'mt-2' : 'mt-6'} flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide`}>
+        <div className={`${ownerTabs.length > 1 || categoryTabs.length > 1 ? 'mt-2' : 'mt-6'} flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide`}>
           {filters.map((f) => (
             <button
               key={f.key}
@@ -237,6 +252,43 @@ function StatusLabel({ label, count, color }: { label: string; count: number; co
       <span className={`h-2 w-2 rounded-full ${color}`} />
       <span className="text-[11px] text-muted-foreground">{label}</span>
       <span className="text-[11px] font-semibold text-foreground">{count}</span>
+    </div>
+  );
+}
+
+function FilterRow<T extends string>({
+  label,
+  tabs,
+  value,
+  onChange,
+  renderLabel,
+  className = "",
+}: {
+  label: string;
+  tabs: T[];
+  value: T;
+  onChange: (v: T) => void;
+  renderLabel: (v: T) => string;
+  className?: string;
+}) {
+  return (
+    <div className={`flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide ${className}`}>
+      <span className="shrink-0 text-[11px] font-medium text-muted-foreground/70 pr-0.5 tracking-wide">
+        {label}
+      </span>
+      {tabs.map((t) => (
+        <button
+          key={t}
+          onClick={() => onChange(t)}
+          className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-medium transition-all ${
+            value === t
+              ? "bg-primary/10 text-primary ring-1 ring-primary/20"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {renderLabel(t)}
+        </button>
+      ))}
     </div>
   );
 }
