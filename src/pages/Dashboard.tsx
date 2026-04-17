@@ -1,16 +1,21 @@
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, TrendingDown } from "lucide-react";
-import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus } from "@/lib/assets";
+import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus, OWNERS, type Owner } from "@/lib/assets";
 import { useSettings } from "@/lib/settings";
 import AssetCard from "@/components/AssetCard";
+import AssetListItem from "@/components/AssetListItem";
+import AssetSticker from "@/components/AssetSticker";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Filter = "all" | AssetStatus;
+type OwnerFilter = "all" | Owner;
 
 export default function Dashboard() {
   const assets = useMemo(() => getAssets(), []);
   const [filter, setFilter] = useState<Filter>("all");
+  const [ownerFilter, setOwnerFilter] = useState<OwnerFilter>("all");
   const { formatPrice, formatDailyCost, durationSuffix, currencySymbol, settings } = useSettings();
+  const viewMode = settings.viewMode;
 
   const total = getTotalValue(assets);
   const dailyCost = getOverallDailyCost(assets);
@@ -20,7 +25,15 @@ export default function Dashboard() {
   const soldCount = assets.filter((a) => a.status === "sold").length;
   const totalCount = assets.length;
 
-  const filtered = filter === "all" ? assets : assets.filter((a) => a.status === filter);
+  const presentOwners = Array.from(new Set(assets.map(a => a.owner).filter(Boolean))) as Owner[];
+  const ownerTabs: OwnerFilter[] = ["all", ...OWNERS.filter(o => presentOwners.includes(o))];
+  const ownerLabel = (o: OwnerFilter) => (o === "all" ? "全部" : o);
+
+  const filtered = assets.filter(a => {
+    if (filter !== "all" && a.status !== filter) return false;
+    if (ownerFilter !== "all" && a.owner !== ownerFilter) return false;
+    return true;
+  });
 
   const filters: { key: Filter; label: string; count: number }[] = [
     { key: "all", label: "全部", count: totalCount },
