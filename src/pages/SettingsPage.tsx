@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ChevronRight, Sun, Moon, Check, LayoutGrid, List, Sparkles } from 'lucide-react';
+import { ChevronRight, Sun, Moon, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useSettings, CURRENCY_MAP, DURATION_MAP, type CurrencyCode, type DurationUnit, type ThemeMode, type ViewMode } from '@/lib/settings';
+import { useSettings, CURRENCY_MAP, DURATION_MAP, type CurrencyCode, type DurationUnit, type ViewMode } from '@/lib/settings';
 
 interface SettingItemProps {
   icon: React.ReactNode;
