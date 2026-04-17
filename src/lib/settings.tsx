@@ -89,11 +89,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     return `${currencySymbol}${price.toLocaleString('zh-CN', { minimumFractionDigits: dp, maximumFractionDigits: dp })}`;
   }, [currencySymbol, dp]);
 
+  // Cost in cards is ALWAYS shown as daily — duration unit only affects "已使用 X 天/月/年" display.
   const formatDailyCost = useCallback((dailyCost: number) => {
-    // dailyCost is per-day, convert to per-unit
-    const costPerUnit = dailyCost * durInfo.divisor;
-    return `${currencySymbol}${costPerUnit.toFixed(dp)}`;
-  }, [currencySymbol, dp, durInfo.divisor]);
+    return `${currencySymbol}${dailyCost.toFixed(dp)}`;
+  }, [currencySymbol, dp]);
 
   const formatDuration = useCallback((days: number) => {
     const val = days / durInfo.divisor;
@@ -101,7 +100,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     return `${formatted} ${durInfo.label}`;
   }, [durInfo]);
 
-  const durationSuffix = `/${durInfo.shortLabel}`;
+  // Cost suffix always per-day; only the duration text follows the unit setting.
+  const durationSuffix = '/天';
 
   return (
     <SettingsContext.Provider value={{ settings, updateSettings, formatPrice, formatDailyCost, formatDuration, durationSuffix, currencySymbol }}>
