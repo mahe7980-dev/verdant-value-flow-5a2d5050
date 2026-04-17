@@ -124,16 +124,9 @@ export default function TabBar() {
           className="fixed left-0 right-0 z-50 flex justify-center pointer-events-none"
           style={{ bottom: 'max(env(safe-area-inset-bottom, 0px) + 32px, 32px)' }}
         >
-          {/* Goo container — children inside merge liquidly */}
-          <div
-            className="relative flex items-center pointer-events-auto"
-            style={{
-              filter: 'url(#liquid-goo)',
-              // give the filter room so blurred edges aren't clipped
-              padding: '20px 24px',
-              margin: '-20px -24px',
-            }}
-          >
+          {/* Container — children sit side-by-side. Goo filter removed because it erases
+              the translucent glass background due to alpha thresholding. */}
+          <div className="relative flex items-center gap-2 pointer-events-auto">
             <AnimatePresence initial={false} mode="popLayout">
               {!collapsed ? (
                 <motion.div
