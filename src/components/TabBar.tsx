@@ -32,7 +32,7 @@ export default function TabBar() {
     const onScroll = () => {
       const y = window.scrollY;
       // Collapse only after scrolling past 2 viewport heights
-      setScrolled(y > window.innerHeight * 2);
+      setScrolled(y > window.innerHeight * 1.5);
       // Any user-driven scroll movement cancels the force-expand override
       if (Math.abs(y - lastY) > 2) setForceExpanded(false);
       lastY = y;
