@@ -1,33 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ChevronRight, Calendar, LayoutGrid, DollarSign, FileText, User } from 'lucide-react';
+import { X, ChevronRight, Calendar, LayoutGrid, DollarSign, FileText, User, Plus } from 'lucide-react';
 import { useSettings } from '@/lib/settings';
-import { addAsset, CATEGORIES, CATEGORY_EMOJI, OWNERS, type Owner } from '@/lib/assets';
-
-const EMOJI_LIST = [
-  '📱', '💻', '🖥️', '⌨️', '🖱️', '🎧', '📷', '📹', '🎮', '🕹️', '📺', '🔊', '⌚', '🔌', '💾', '🖨️', '📡', '🔋', '💡', '📻',
-  '🧊', '🍳', '☕', '🧹', '🪥', '🧺', '🪣', '🚿', '🛁', '🌡️',
-  '🪑', '🛋️', '🛏️', '🪵', '🪞', '🪟', '🚪', '🧸',
-  '🚗', '🚲', '🛵', '🏍️', '🚌', '✈️', '🛴', '⛵',
-  '👔', '👗', '👟', '👒', '🎒', '👜', '🧥', '👓', '💍', '👠',
-  '⚽', '🏀', '🎾', '🏓', '⛳', '🎿', '🏄', '🚣', '🏋️', '🧘',
-  '📦', '🎁', '🎵', '🎨', '📚', '🏠', '🔑', '🧰', '💊', '🪴',
-];
+import {
+  addAsset,
+  getAllCategories,
+  addCustomCategory,
+  getOwners,
+  addOwner,
+  EMOJI_TO_CATEGORY,
+  CATEGORY_EMOJI,
+  type Owner,
+} from '@/lib/assets';
 
 const EMOJI_CATEGORIES: Record<string, string[]> = {
-  '全部': EMOJI_LIST,
-  '数码': ['📱', '💻', '🖥️', '⌨️', '🖱️', '🎧', '📷', '📹', '🎮', '🕹️', '📺', '🔊', '⌚', '🔌', '💾', '🖨️', '📡', '🔋', '💡', '📻'],
-  '电器': ['🧊', '🍳', '☕', '🧹', '🪥', '🧺', '🪣', '🚿', '🛁', '🌡️'],
-  '家具': ['🪑', '🛋️', '🛏️', '🪵', '🪞', '🪟', '🚪', '🧸'],
-  '交通': ['🚗', '🚲', '🛵', '🏍️', '🚌', '✈️', '🛴', '⛵'],
-  '包包': ['🎒', '👜', '💼', '🧳'],
-  '服饰': ['👔', '👗', '👟', '👒', '🧥', '👓', '💍', '👠'],
-  '运动': ['⚽', '🏀', '🎾', '🏓', '⛳', '🎿', '🏄', '🚣', '🏋️', '🧘'],
+  '数码': ['📱', '💻', '🖥️', '⌨️', '🖱️', '🎧', '📷', '📹', '🎮', '🕹️', '📺', '🔊', '⌚', '🔌', '💾', '🖨️', '📡', '🔋', '💡', '📻', '☎️', '📟', '📠', '💿', '📀'],
+  '家电': ['🧊', '🍳', '☕', '🧹', '🪥', '🧺', '🪣', '🚿', '🛁', '🌡️', '🔥', '💨', '🧴', '🪒'],
+  '家具': ['🪑', '🛋️', '🛏️', '🪵', '🪞', '🪟', '🚪', '🧸', '🖼️', '🕰️'],
+  '交通': ['🚗', '🚙', '🚕', '🚌', '🚎', '🏎️', '🚓', '🚐', '🛻', '🚚', '🚲', '🛵', '🏍️', '🛴', '✈️', '⛵', '🚤', '🛥️', '🛳️', '🚁'],
+  '包包': ['🎒', '👜', '💼', '🧳', '👝', '👛'],
+  '服饰': ['👔', '👕', '👖', '🧥', '🥾', '👗', '👚', '👟', '👞', '👠', '👒', '🎩', '🧢', '👓', '🕶️', '💍', '🧣', '🧤', '🧦'],
+  '运动': ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🏓', '🏸', '⛳', '🥊', '🥋', '🎿', '🛷', '🏂', '🏄', '🚣', '🏋️', '🚴', '🤸', '🧘', '🏹'],
+  '其他': ['📦', '🎁', '🎵', '🎨', '📚', '🏠', '🔑', '🧰', '💊', '🪴', '🎻', '🎸', '🥁', '🎹', '🎺', '✏️', '📒', '📓', '📕', '🖌️'],
 };
 
-function EmojiPicker({ selected, onSelect, onClose }: { selected: string; onSelect: (e: string) => void; onClose: () => void }) {
+const ALL_EMOJI = Object.values(EMOJI_CATEGORIES).flat();
+
+function EmojiPicker({
+  selected,
+  onSelect,
+  onClose,
+}: {
+  selected: string;
+  onSelect: (e: string, category?: string) => void;
+  onClose: () => void;
+}) {
+  const cats = ['全部', ...Object.keys(EMOJI_CATEGORIES)];
   const [tab, setTab] = useState('全部');
-  const cats = Object.keys(EMOJI_CATEGORIES);
+
+  const list = tab === '全部' ? ALL_EMOJI : (EMOJI_CATEGORIES[tab] || []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/25 backdrop-blur-sm" onClick={onClose}>
@@ -35,19 +46,16 @@ function EmojiPicker({ selected, onSelect, onClose }: { selected: string; onSele
         className="w-full max-w-lg rounded-t-[28px] bg-card pt-3 pb-8 animate-in slide-in-from-bottom duration-300"
         onClick={e => e.stopPropagation()}
       >
-        {/* Handle */}
         <div className="flex justify-center mb-3">
           <div className="h-1 w-10 rounded-full bg-muted-foreground/20" />
         </div>
 
-        {/* Header */}
         <div className="flex items-center justify-between px-5 mb-4">
           <button onClick={onClose} className="text-[14px] text-muted-foreground">取消</button>
           <span className="text-[15px] font-semibold text-foreground">选择图标</span>
           <button onClick={onClose} className="text-[14px] font-semibold text-primary">确定</button>
         </div>
 
-        {/* Category tabs */}
         <div className="flex gap-1.5 px-5 mb-4 overflow-x-auto no-scrollbar">
           {cats.map(c => (
             <button
@@ -62,12 +70,14 @@ function EmojiPicker({ selected, onSelect, onClose }: { selected: string; onSele
           ))}
         </div>
 
-        {/* Emoji grid */}
         <div className="grid grid-cols-6 gap-1.5 px-5 max-h-[45vh] overflow-y-auto">
-          {(EMOJI_CATEGORIES[tab] || EMOJI_LIST).map((emoji, i) => (
+          {list.map((emoji, i) => (
             <button
               key={`${emoji}-${i}`}
-              onClick={() => { onSelect(emoji); onClose(); }}
+              onClick={() => {
+                onSelect(emoji, EMOJI_TO_CATEGORY[emoji]);
+                onClose();
+              }}
               className={`flex h-[52px] w-full items-center justify-center rounded-2xl text-2xl transition-all ${
                 selected === emoji ? 'bg-accent ring-2 ring-primary scale-105' : 'bg-secondary/50 hover:bg-secondary active:scale-95'
               }`}
@@ -81,6 +91,111 @@ function EmojiPicker({ selected, onSelect, onClose }: { selected: string; onSele
   );
 }
 
+// ---------- Generic bottom-sheet picker for category & owner ----------
+function ChoiceSheet({
+  title,
+  options,
+  selected,
+  onSelect,
+  onAdd,
+  addLabel,
+  onClose,
+}: {
+  title: string;
+  options: string[];
+  selected?: string;
+  onSelect: (v: string) => void;
+  onAdd?: (name: string) => void;
+  addLabel?: string;
+  onClose: () => void;
+}) {
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState('');
+
+  const submitNew = () => {
+    const t = draft.trim();
+    if (t && onAdd) {
+      onAdd(t);
+      onSelect(t);
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/25 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="w-full max-w-lg rounded-t-[28px] bg-card pt-3 pb-8 animate-in slide-in-from-bottom duration-300"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex justify-center mb-3">
+          <div className="h-1 w-10 rounded-full bg-muted-foreground/20" />
+        </div>
+
+        <div className="flex items-center justify-between px-5 mb-4">
+          <button onClick={onClose} className="text-[14px] text-muted-foreground">取消</button>
+          <span className="text-[15px] font-semibold text-foreground">{title}</span>
+          <div className="w-10" />
+        </div>
+
+        <div className="px-5 max-h-[55vh] overflow-y-auto">
+          {options.length === 0 && !adding && (
+            <p className="text-center text-[13px] text-muted-foreground py-6">暂无选项，点击下方新增</p>
+          )}
+
+          <div className="space-y-1.5">
+            {options.map(opt => (
+              <button
+                key={opt}
+                onClick={() => { onSelect(opt); onClose(); }}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-[14px] transition-all ${
+                  selected === opt
+                    ? 'bg-accent text-foreground font-medium'
+                    : 'bg-secondary/40 text-foreground hover:bg-secondary'
+                }`}
+              >
+                <span>{opt}</span>
+                {selected === opt && <span className="text-primary text-[13px]">✓</span>}
+              </button>
+            ))}
+          </div>
+
+          {onAdd && (
+            <div className="mt-3">
+              {adding ? (
+                <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-secondary/40">
+                  <input
+                    autoFocus
+                    value={draft}
+                    onChange={e => setDraft(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && submitNew()}
+                    placeholder={addLabel || '名称'}
+                    className="flex-1 bg-transparent outline-none text-[14px] text-foreground placeholder:text-muted-foreground/50"
+                  />
+                  <button
+                    onClick={submitNew}
+                    disabled={!draft.trim()}
+                    className="text-[13px] font-semibold text-primary disabled:opacity-30"
+                  >
+                    添加
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setAdding(true)}
+                  className="w-full flex items-center justify-center gap-1.5 px-4 py-3 rounded-2xl border border-dashed border-border text-[13px] text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-all"
+                >
+                  <Plus size={14} strokeWidth={2} />
+                  {addLabel || '新增'}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AddAsset() {
   const navigate = useNavigate();
   const { currencySymbol } = useSettings();
@@ -88,10 +203,14 @@ export default function AddAsset() {
   const [emoji, setEmoji] = useState('📦');
   const [price, setPrice] = useState('');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [category, setCategory] = useState(CATEGORIES[0]);
-  const [owner, setOwner] = useState<Owner>('我的');
+  const [categories, setCategories] = useState<string[]>(() => getAllCategories());
+  const [category, setCategory] = useState(categories[0] || '其他');
+  const [owners, setOwners] = useState<Owner[]>(() => getOwners());
+  const [owner, setOwner] = useState<Owner | undefined>(undefined);
   const [notes, setNotes] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showCatPicker, setShowCatPicker] = useState(false);
+  const [showOwnerPicker, setShowOwnerPicker] = useState(false);
 
   const canSubmit = name.trim() && parseFloat(price) > 0;
 
@@ -109,7 +228,7 @@ export default function AddAsset() {
       purchaseDate: date,
       status: 'active',
       category,
-      owner,
+      owner: owner || undefined,
       notes: notes.trim() || undefined,
     });
     navigate('/');
@@ -158,9 +277,7 @@ export default function AddAsset() {
           style={{ boxShadow: '0 0 0 1px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.03), 0 4px 14px rgba(0,0,0,0.04)' }}
         >
           <div className="flex items-center gap-3 px-4 py-3.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
-              <DollarSign size={15} className="text-amber-500" strokeWidth={2} />
-            </span>
+            <DollarSign size={16} className="text-foreground/70" strokeWidth={1.75} />
             <span className="text-[14px] font-medium text-foreground">价格（{currencySymbol}）</span>
             <input
               type="number"
@@ -172,15 +289,13 @@ export default function AddAsset() {
           </div>
         </div>
 
-        {/* Date + Category */}
+        {/* Date + Category + Owner */}
         <div
           className="rounded-[18px] bg-card divide-y divide-border/60 overflow-hidden"
           style={{ boxShadow: '0 0 0 1px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.03), 0 4px 14px rgba(0,0,0,0.04)' }}
         >
-          <label className="flex items-center gap-3 px-4 py-3.5 cursor-pointer">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
-              <Calendar size={15} className="text-blue-500" strokeWidth={2} />
-            </span>
+          <label className="relative flex items-center gap-3 px-4 py-3.5 cursor-pointer">
+            <Calendar size={16} className="text-foreground/70" strokeWidth={1.75} />
             <span className="flex-1 text-[14px] font-medium text-foreground">购买日期</span>
             <span className="text-[13px] text-muted-foreground">{formatDate(date)}</span>
             <ChevronRight size={14} className="text-muted-foreground/40" />
@@ -188,45 +303,33 @@ export default function AddAsset() {
               type="date"
               value={date}
               onChange={e => setDate(e.target.value)}
-              className="absolute opacity-0 w-0 h-0"
+              className="absolute opacity-0 inset-0 cursor-pointer"
             />
           </label>
-          <div className="flex items-center gap-3 px-4 py-3.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50">
-              <LayoutGrid size={15} className="text-purple-500" strokeWidth={2} />
-            </span>
-            <span className="text-[14px] font-medium text-foreground">类别</span>
-            <div className="flex-1 flex justify-end">
-              <select
-                value={category}
-                onChange={e => setCategory(e.target.value)}
-                className="text-[13px] text-muted-foreground bg-transparent outline-none appearance-none text-right pr-1 cursor-pointer"
-              >
-                {CATEGORIES.map(c => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
+
+          <button
+            type="button"
+            onClick={() => setShowCatPicker(true)}
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-secondary/40 transition-colors"
+          >
+            <LayoutGrid size={16} className="text-foreground/70" strokeWidth={1.75} />
+            <span className="flex-1 text-[14px] font-medium text-foreground">类别</span>
+            <span className="text-[13px] text-muted-foreground">{category}</span>
             <ChevronRight size={14} className="text-muted-foreground/40" />
-          </div>
-          <div className="flex items-center gap-3 px-4 py-3.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pink-50">
-              <User size={15} className="text-pink-500" strokeWidth={2} />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowOwnerPicker(true)}
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-secondary/40 transition-colors"
+          >
+            <User size={16} className="text-foreground/70" strokeWidth={1.75} />
+            <span className="flex-1 text-[14px] font-medium text-foreground">归属人</span>
+            <span className="text-[13px] text-muted-foreground">
+              {owner || <span className="text-muted-foreground/50">未设置</span>}
             </span>
-            <span className="text-[14px] font-medium text-foreground">持有人</span>
-            <div className="flex-1 flex justify-end">
-              <select
-                value={owner}
-                onChange={e => setOwner(e.target.value as Owner)}
-                className="text-[13px] text-muted-foreground bg-transparent outline-none appearance-none text-right pr-1 cursor-pointer"
-              >
-                {OWNERS.map(o => (
-                  <option key={o} value={o}>{o}</option>
-                ))}
-              </select>
-            </div>
             <ChevronRight size={14} className="text-muted-foreground/40" />
-          </div>
+          </button>
         </div>
 
         {/* Notes */}
@@ -235,15 +338,13 @@ export default function AddAsset() {
           style={{ boxShadow: '0 0 0 1px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.03), 0 4px 14px rgba(0,0,0,0.04)' }}
         >
           <div className="flex items-start gap-3 px-4 py-3.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent mt-0.5">
-              <FileText size={15} className="text-primary" strokeWidth={2} />
-            </span>
+            <FileText size={16} className="text-foreground/70 mt-1" strokeWidth={1.75} />
             <textarea
               value={notes}
               onChange={e => setNotes(e.target.value)}
               placeholder="添加备注..."
               rows={3}
-              className="flex-1 text-[14px] text-foreground placeholder:text-muted-foreground/35 bg-transparent outline-none resize-none mt-1"
+              className="flex-1 text-[14px] text-foreground placeholder:text-muted-foreground/35 bg-transparent outline-none resize-none mt-0.5"
             />
           </div>
         </div>
@@ -263,12 +364,54 @@ export default function AddAsset() {
         </button>
       </div>
 
-      {/* Emoji Picker */}
+      {/* Emoji Picker — picking auto-selects matching category */}
       {showEmojiPicker && (
         <EmojiPicker
           selected={emoji}
-          onSelect={setEmoji}
+          onSelect={(e, autoCat) => {
+            setEmoji(e);
+            if (autoCat && categories.includes(autoCat)) {
+              setCategory(autoCat);
+            }
+          }}
           onClose={() => setShowEmojiPicker(false)}
+        />
+      )}
+
+      {/* Category picker */}
+      {showCatPicker && (
+        <ChoiceSheet
+          title="选择类别"
+          options={categories}
+          selected={category}
+          onSelect={setCategory}
+          onAdd={(name) => {
+            addCustomCategory(name);
+            const next = getAllCategories();
+            setCategories(next);
+            // If user hasn't picked a custom emoji, suggest the default for this new category.
+            if (emoji === '📦' && CATEGORY_EMOJI[name]) {
+              setEmoji(CATEGORY_EMOJI[name]);
+            }
+          }}
+          addLabel="新增类别"
+          onClose={() => setShowCatPicker(false)}
+        />
+      )}
+
+      {/* Owner picker */}
+      {showOwnerPicker && (
+        <ChoiceSheet
+          title="选择归属人"
+          options={owners}
+          selected={owner}
+          onSelect={setOwner}
+          onAdd={(name) => {
+            addOwner(name);
+            setOwners(getOwners());
+          }}
+          addLabel="新增归属人"
+          onClose={() => setShowOwnerPicker(false)}
         />
       )}
     </div>
