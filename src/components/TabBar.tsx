@@ -31,7 +31,8 @@ export default function TabBar() {
     let lastY = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
-      setScrolled(y > 80);
+      // Collapse only after scrolling past 2 viewport heights
+      setScrolled(y > window.innerHeight * 2);
       // Any user-driven scroll movement cancels the force-expand override
       if (Math.abs(y - lastY) > 2) setForceExpanded(false);
       lastY = y;
@@ -210,7 +211,7 @@ export default function TabBar() {
               )}
             </AnimatePresence>
 
-            {/* Add button — always present, just shifts position */}
+            {/* Add button — dark when expanded, weakened white-glass when collapsed */}
             <motion.button
               layout
               onClick={() => navigate('/add')}
@@ -221,18 +222,24 @@ export default function TabBar() {
                 height: ICON_SIZE,
                 width: ICON_SIZE,
                 borderRadius: ICON_SIZE / 2,
-                ...darkGlass,
-                opacity: collapsed ? 0.88 : 1,
+                ...(collapsed ? lightGlass : darkGlass),
+                opacity: collapsed ? 0.9 : 1,
               }}
               transition={SPRING}
             >
               <div
                 className="pointer-events-none absolute inset-x-0 top-0 h-[1px]"
                 style={{
-                  background: 'linear-gradient(90deg, transparent 20%, rgba(255,255,255,0.18) 50%, transparent 80%)',
+                  background: collapsed
+                    ? 'linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.65) 50%, transparent 90%)'
+                    : 'linear-gradient(90deg, transparent 20%, rgba(255,255,255,0.18) 50%, transparent 80%)',
                 }}
               />
-              <Plus size={22} className="text-white" strokeWidth={2.5} />
+              <Plus
+                size={22}
+                strokeWidth={2.5}
+                className={collapsed ? 'text-foreground' : 'text-white'}
+              />
             </motion.button>
           </div>
         </motion.div>
