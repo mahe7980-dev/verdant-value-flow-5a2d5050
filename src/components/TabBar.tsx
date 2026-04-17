@@ -222,7 +222,7 @@ export default function TabBar() {
                 width: ICON_SIZE,
                 borderRadius: ICON_SIZE / 2,
                 ...darkGlass,
-                opacity: scrolled ? 0.88 : 1,
+                opacity: collapsed ? 0.88 : 1,
               }}
               transition={SPRING}
             >
