@@ -286,7 +286,7 @@ function ActiveChip({ label, onClear }: { label: string; onClear: () => void }) 
   );
 }
 
-function FilterSheet({
+function FilterPopover({
   owners,
   categories,
   ownerFilter,
@@ -307,33 +307,44 @@ function FilterSheet({
 }) {
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/25 backdrop-blur-sm"
+      className="fixed inset-0 z-50"
       onClick={onClose}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.15 }}
     >
+      {/* Subtle dim layer */}
+      <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />
+
+      {/* Popover anchored under top-right filter icon.
+          Header: px-6 pt-14 pb-5; icon at right ~24px (px-6) inside flex.
+          Top of icon ≈ 56px (pt-14). Icon h-9 (36px) → bottom ≈ 92px. */}
       <motion.div
-        className="w-full max-w-lg rounded-t-[28px] bg-card pt-3 pb-8"
         onClick={e => e.stopPropagation()}
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 320, damping: 32 }}
+        className="absolute right-4 top-[96px] w-[280px] origin-top-right rounded-2xl bg-card overflow-hidden"
+        style={{
+          boxShadow:
+            '0 0 0 1px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.12)',
+        }}
+        initial={{ opacity: 0, scale: 0.92, y: -8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: -6 }}
+        transition={{ type: "spring", stiffness: 380, damping: 28 }}
       >
-        <div className="flex justify-center mb-3">
-          <div className="h-1 w-10 rounded-full bg-muted-foreground/20" />
+        {/* Little arrow pointer */}
+        <div
+          className="absolute -top-1.5 right-5 h-3 w-3 rotate-45 bg-card"
+          style={{ boxShadow: '-1px -1px 0 0 rgba(0,0,0,0.04)' }}
+        />
+
+        <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
+          <button onClick={onReset} className="text-[12px] text-muted-foreground hover:text-foreground">重置</button>
+          <span className="text-[13px] font-semibold text-foreground">筛选</span>
+          <button onClick={onClose} className="text-[12px] font-semibold text-primary">完成</button>
         </div>
 
-        <div className="flex items-center justify-between px-5 mb-5">
-          <button onClick={onReset} className="text-[13px] text-muted-foreground hover:text-foreground">重置</button>
-          <span className="text-[15px] font-semibold text-foreground">筛选</span>
-          <button onClick={onClose} className="text-[13px] font-semibold text-primary">完成</button>
-        </div>
-
-        <div className="px-5 space-y-6 max-h-[65vh] overflow-y-auto">
-          {/* Owner section */}
+        <div className="px-4 pb-4 space-y-4 max-h-[60vh] overflow-y-auto">
           <FilterSection
             title="归属"
             options={["all", ...owners] as OwnerFilter[]}
@@ -343,7 +354,6 @@ function FilterSheet({
             emptyHint="暂无归属"
           />
 
-          {/* Category section */}
           <FilterSection
             title="类别"
             options={["all", ...categories] as CategoryFilter[]}
