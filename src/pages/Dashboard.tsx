@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Search, SlidersHorizontal, TrendingDown } from "lucide-react";
+import { Search, SlidersHorizontal, TrendingDown, X } from "lucide-react";
 import { getAssets, getTotalValue, getOverallDailyCost, AssetStatus, getOwners, type Owner } from "@/lib/assets";
 import { useSettings } from "@/lib/settings";
 import AssetCard from "@/components/AssetCard";
@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [filter, setFilter] = useState<Filter>("all");
   const [ownerFilter, setOwnerFilter] = useState<OwnerFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
+  const [showFilterSheet, setShowFilterSheet] = useState(false);
   const { formatPrice, formatDailyCost, durationSuffix, currencySymbol, settings } = useSettings();
   const viewMode = settings.viewMode;
 
@@ -33,15 +34,11 @@ export default function Dashboard() {
     ...knownOwners.filter(o => presentOwners.includes(o)),
     ...presentOwners.filter(o => !knownOwners.includes(o)),
   ];
-  const ownerTabs: OwnerFilter[] = ["all", ...orderedOwners];
-  const ownerLabel = (o: OwnerFilter) => (o === "all" ? "全部" : o);
 
   // Categories actually used by current assets, preserving first-seen order.
   const presentCategories = Array.from(
     new Set(assets.map(a => a.category).filter(Boolean))
   ) as string[];
-  const categoryTabs: CategoryFilter[] = ["all", ...presentCategories];
-  const categoryLabel = (c: CategoryFilter) => (c === "all" ? "全部" : c);
 
   const filtered = assets.filter(a => {
     if (filter !== "all" && a.status !== filter) return false;
@@ -56,6 +53,9 @@ export default function Dashboard() {
     { key: "retired", label: "已退役", count: retiredCount },
     { key: "sold", label: "已卖出", count: soldCount },
   ];
+
+  const activeFilterCount =
+    (ownerFilter !== "all" ? 1 : 0) + (categoryFilter !== "all" ? 1 : 0);
 
   return (
     <div className="min-h-screen pb-28 bg-background">
@@ -78,8 +78,16 @@ export default function Dashboard() {
               <button className="h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10">
                 <Search size={16} strokeWidth={1.8} className="text-primary-foreground" />
               </button>
-              <button className="h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10">
+              <button
+                onClick={() => setShowFilterSheet(true)}
+                className="relative h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10"
+              >
                 <SlidersHorizontal size={16} strokeWidth={1.8} className="text-primary-foreground" />
+                {activeFilterCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 flex items-center justify-center rounded-full bg-primary-foreground text-primary text-[10px] font-bold leading-none">
+                    {activeFilterCount}
+                  </span>
+                )}
               </button>
             </div>
           </div>
@@ -138,32 +146,26 @@ export default function Dashboard() {
       </div>
 
       <div className="px-5">
-        {/* Owner filter (renamed: 归属) */}
-        {ownerTabs.length > 1 && (
-          <FilterRow
-            label="归属"
-            tabs={ownerTabs}
-            value={ownerFilter}
-            onChange={setOwnerFilter}
-            renderLabel={ownerLabel}
-            className="mt-6"
-          />
-        )}
-
-        {/* Category filter */}
-        {categoryTabs.length > 1 && (
-          <FilterRow
-            label="类别"
-            tabs={categoryTabs}
-            value={categoryFilter}
-            onChange={setCategoryFilter}
-            renderLabel={categoryLabel}
-            className={ownerTabs.length > 1 ? "mt-2" : "mt-6"}
-          />
+        {/* Active filter chips */}
+        {activeFilterCount > 0 && (
+          <div className="mt-5 flex items-center gap-2 flex-wrap">
+            {ownerFilter !== "all" && (
+              <ActiveChip label={`归属：${ownerFilter}`} onClear={() => setOwnerFilter("all")} />
+            )}
+            {categoryFilter !== "all" && (
+              <ActiveChip label={`类别：${categoryFilter}`} onClear={() => setCategoryFilter("all")} />
+            )}
+            <button
+              onClick={() => { setOwnerFilter("all"); setCategoryFilter("all"); }}
+              className="text-[11px] text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
+            >
+              清除
+            </button>
+          </div>
         )}
 
         {/* Status filter */}
-        <div className={`${ownerTabs.length > 1 || categoryTabs.length > 1 ? 'mt-2' : 'mt-6'} flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide`}>
+        <div className={`${activeFilterCount > 0 ? 'mt-3' : 'mt-6'} flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide`}>
           {filters.map((f) => (
             <button
               key={f.key}
@@ -242,6 +244,22 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* Filter bottom sheet */}
+      <AnimatePresence>
+        {showFilterSheet && (
+          <FilterSheet
+            owners={orderedOwners}
+            categories={presentCategories}
+            ownerFilter={ownerFilter}
+            categoryFilter={categoryFilter}
+            onChangeOwner={setOwnerFilter}
+            onChangeCategory={setCategoryFilter}
+            onReset={() => { setOwnerFilter("all"); setCategoryFilter("all"); }}
+            onClose={() => setShowFilterSheet(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -256,39 +274,130 @@ function StatusLabel({ label, count, color }: { label: string; count: number; co
   );
 }
 
-function FilterRow<T extends string>({
-  label,
-  tabs,
+function ActiveChip({ label, onClear }: { label: string; onClear: () => void }) {
+  return (
+    <button
+      onClick={onClear}
+      className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium ring-1 ring-primary/20"
+    >
+      {label}
+      <X size={10} strokeWidth={2.5} />
+    </button>
+  );
+}
+
+function FilterSheet({
+  owners,
+  categories,
+  ownerFilter,
+  categoryFilter,
+  onChangeOwner,
+  onChangeCategory,
+  onReset,
+  onClose,
+}: {
+  owners: Owner[];
+  categories: string[];
+  ownerFilter: OwnerFilter;
+  categoryFilter: CategoryFilter;
+  onChangeOwner: (v: OwnerFilter) => void;
+  onChangeCategory: (v: CategoryFilter) => void;
+  onReset: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/25 backdrop-blur-sm"
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      <motion.div
+        className="w-full max-w-lg rounded-t-[28px] bg-card pt-3 pb-8"
+        onClick={e => e.stopPropagation()}
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", stiffness: 320, damping: 32 }}
+      >
+        <div className="flex justify-center mb-3">
+          <div className="h-1 w-10 rounded-full bg-muted-foreground/20" />
+        </div>
+
+        <div className="flex items-center justify-between px-5 mb-5">
+          <button onClick={onReset} className="text-[13px] text-muted-foreground hover:text-foreground">重置</button>
+          <span className="text-[15px] font-semibold text-foreground">筛选</span>
+          <button onClick={onClose} className="text-[13px] font-semibold text-primary">完成</button>
+        </div>
+
+        <div className="px-5 space-y-6 max-h-[65vh] overflow-y-auto">
+          {/* Owner section */}
+          <FilterSection
+            title="归属"
+            options={["all", ...owners] as OwnerFilter[]}
+            value={ownerFilter}
+            onChange={onChangeOwner}
+            renderLabel={(v) => (v === "all" ? "全部" : v)}
+            emptyHint="暂无归属"
+          />
+
+          {/* Category section */}
+          <FilterSection
+            title="类别"
+            options={["all", ...categories] as CategoryFilter[]}
+            value={categoryFilter}
+            onChange={onChangeCategory}
+            renderLabel={(v) => (v === "all" ? "全部" : v)}
+            emptyHint="暂无类别"
+          />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function FilterSection<T extends string>({
+  title,
+  options,
   value,
   onChange,
   renderLabel,
-  className = "",
+  emptyHint,
 }: {
-  label: string;
-  tabs: T[];
+  title: string;
+  options: T[];
   value: T;
   onChange: (v: T) => void;
   renderLabel: (v: T) => string;
-  className?: string;
+  emptyHint: string;
 }) {
+  const hasItems = options.length > 1;
   return (
-    <div className={`flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide ${className}`}>
-      <span className="shrink-0 text-[11px] font-medium text-muted-foreground/70 pr-0.5 tracking-wide">
-        {label}
-      </span>
-      {tabs.map((t) => (
-        <button
-          key={t}
-          onClick={() => onChange(t)}
-          className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-medium transition-all ${
-            value === t
-              ? "bg-primary/10 text-primary ring-1 ring-primary/20"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          {renderLabel(t)}
-        </button>
-      ))}
+    <div>
+      <p className="text-[11px] font-semibold text-muted-foreground/70 tracking-wider uppercase mb-2.5">
+        {title}
+      </p>
+      {hasItems ? (
+        <div className="flex flex-wrap gap-2">
+          {options.map((o) => (
+            <button
+              key={o}
+              onClick={() => onChange(o)}
+              className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all ${
+                value === o
+                  ? "bg-primary/10 text-primary ring-1 ring-primary/30"
+                  : "bg-secondary/60 text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {renderLabel(o)}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="text-[12px] text-muted-foreground/60 py-1">{emptyHint}</p>
+      )}
     </div>
   );
 }
