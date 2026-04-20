@@ -245,10 +245,10 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Filter bottom sheet */}
+      {/* Filter popover (anchored to top-right filter icon) */}
       <AnimatePresence>
         {showFilterSheet && (
-          <FilterSheet
+          <FilterPopover
             owners={orderedOwners}
             categories={presentCategories}
             ownerFilter={ownerFilter}
