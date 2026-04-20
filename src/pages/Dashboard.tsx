@@ -158,7 +158,7 @@ export default function Dashboard() {
               <button
                 key={f.key}
                 onClick={() => setFilter(f.key)}
-                className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-medium transition-all ${
+                className={`shrink-0 px-3 py-1.5 rounded-full text-[12px] font-medium transition-all ${
                   filter === f.key
                     ? "bg-foreground text-background shadow-sm"
                     : "bg-secondary text-muted-foreground hover:text-foreground"
@@ -166,7 +166,7 @@ export default function Dashboard() {
               >
                 {f.label}
                 {f.count > 0 && (
-                  <span className={`ml-1 text-[11px] ${filter === f.key ? "text-background/60" : "text-muted-foreground/60"}`}>
+                  <span className={`ml-1 text-[10px] ${filter === f.key ? "text-background/60" : "text-muted-foreground/60"}`}>
                     {f.count}
                   </span>
                 )}
