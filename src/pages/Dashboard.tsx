@@ -317,12 +317,10 @@ function FilterPopover({
       {/* Subtle dim layer */}
       <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />
 
-      {/* Popover anchored under top-right filter icon.
-          Header: px-6 pt-14 pb-5; icon at right ~24px (px-6) inside flex.
-          Top of icon ≈ 56px (pt-14). Icon h-9 (36px) → bottom ≈ 92px. */}
+      {/* Popover anchored under the filter icon in the status row. */}
       <motion.div
         onClick={e => e.stopPropagation()}
-        className="absolute right-4 top-[96px] w-[280px] origin-top-right rounded-2xl bg-card overflow-hidden"
+        className="absolute right-4 top-[340px] w-[280px] origin-top-right rounded-2xl bg-card overflow-hidden"
         style={{
           boxShadow:
             '0 0 0 1px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.12)',
@@ -334,7 +332,7 @@ function FilterPopover({
       >
         {/* Little arrow pointer */}
         <div
-          className="absolute -top-1.5 right-5 h-3 w-3 rotate-45 bg-card"
+          className="absolute -top-1.5 right-3 h-3 w-3 rotate-45 bg-card"
           style={{ boxShadow: '-1px -1px 0 0 rgba(0,0,0,0.04)' }}
         />
 
