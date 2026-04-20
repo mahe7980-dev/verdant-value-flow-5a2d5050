@@ -68,34 +68,21 @@ export default function Dashboard() {
           }}
         />
 
-        <div className="relative px-6 pt-14 pb-5">
+        <div className="relative px-6 pt-7 pb-4">
           <div className="flex items-center justify-between mb-0.5">
             <div>
               <h1 className="text-[28px] font-bold tracking-tight text-primary-foreground leading-tight">有数</h1>
               <p className="text-[13px] text-primary-foreground/70 mt-0.5">长期主义，理性消费</p>
             </div>
-            <div className="flex items-center gap-2">
-              <button className="h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10">
-                <Search size={16} strokeWidth={1.8} className="text-primary-foreground" />
-              </button>
-              <button
-                onClick={() => setShowFilterSheet(true)}
-                className="relative h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10"
-              >
-                <SlidersHorizontal size={16} strokeWidth={1.8} className="text-primary-foreground" />
-                {activeFilterCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 flex items-center justify-center rounded-full bg-primary-foreground text-primary text-[10px] font-bold leading-none">
-                    {activeFilterCount}
-                  </span>
-                )}
-              </button>
-            </div>
+            <button className="h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10">
+              <Search size={16} strokeWidth={1.8} className="text-primary-foreground" />
+            </button>
           </div>
         </div>
 
         <div className="relative px-5">
           <motion.div
-            className="rounded-[20px] bg-card p-5 overflow-hidden"
+            className="rounded-[20px] bg-card p-4 overflow-hidden"
             style={{
               boxShadow: '0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)',
             }}
@@ -103,28 +90,28 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <div className="mb-5">
+            <div className="mb-3.5">
               <p className="text-[11px] text-muted-foreground mb-1 tracking-wider uppercase font-medium">总资产价值</p>
-              <p className="text-[32px] font-bold text-foreground leading-none tracking-tight">
+              <p className="text-[28px] font-bold text-foreground leading-none tracking-tight">
                 {formatPrice(total)}
               </p>
             </div>
 
-            <div className="flex items-center gap-2 mb-5 bg-accent/60 rounded-xl px-3.5 py-2.5">
-              <div className="h-8 w-8 rounded-lg gradient-green flex items-center justify-center">
-                <TrendingDown size={14} className="text-primary-foreground" strokeWidth={2.5} />
+            <div className="flex items-center gap-2 mb-3.5 bg-accent/60 rounded-xl px-3 py-2">
+              <div className="h-7 w-7 rounded-lg gradient-green flex items-center justify-center">
+                <TrendingDown size={13} className="text-primary-foreground" strokeWidth={2.5} />
               </div>
               <div>
-                <p className="text-[11px] text-muted-foreground leading-tight">日均成本</p>
-                <p className="text-[17px] font-bold text-foreground leading-tight">
+                <p className="text-[10px] text-muted-foreground leading-tight">日均成本</p>
+                <p className="text-[15px] font-bold text-foreground leading-tight">
                   {`${currencySymbol}${dailyCost.toFixed(settings.decimalPlaces)}`}
-                  <span className="text-[12px] font-normal text-muted-foreground">/天</span>
+                  <span className="text-[11px] font-normal text-muted-foreground">/天</span>
                 </p>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="h-2 w-full rounded-full bg-secondary overflow-hidden flex">
+            <div className="space-y-2">
+              <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden flex">
                 {activeCount > 0 && (
                   <div className="h-full bg-primary transition-all rounded-l-full" style={{ width: `${(activeCount / totalCount) * 100}%` }} />
                 )}
@@ -164,26 +151,39 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Status filter */}
-        <div className={`${activeFilterCount > 0 ? 'mt-3' : 'mt-6'} flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide`}>
-          {filters.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-medium transition-all ${
-                filter === f.key
-                  ? "bg-foreground text-background shadow-sm"
-                  : "bg-secondary text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {f.label}
-              {f.count > 0 && (
-                <span className={`ml-1 text-[11px] ${filter === f.key ? "text-background/60" : "text-muted-foreground/60"}`}>
-                  {f.count}
-                </span>
-              )}
-            </button>
-          ))}
+        {/* Status filter + filter button */}
+        <div className={`${activeFilterCount > 0 ? 'mt-3' : 'mt-6'} flex items-center gap-2`}>
+          <div className="flex-1 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {filters.map((f) => (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-medium transition-all ${
+                  filter === f.key
+                    ? "bg-foreground text-background shadow-sm"
+                    : "bg-secondary text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {f.label}
+                {f.count > 0 && (
+                  <span className={`ml-1 text-[11px] ${filter === f.key ? "text-background/60" : "text-muted-foreground/60"}`}>
+                    {f.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setShowFilterSheet(true)}
+            className="relative shrink-0 h-9 w-9 flex items-center justify-center rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <SlidersHorizontal size={15} strokeWidth={1.8} />
+            {activeFilterCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold leading-none">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
         </div>
 
         {/* Asset grid / list / sticker */}
@@ -317,12 +317,10 @@ function FilterPopover({
       {/* Subtle dim layer */}
       <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />
 
-      {/* Popover anchored under top-right filter icon.
-          Header: px-6 pt-14 pb-5; icon at right ~24px (px-6) inside flex.
-          Top of icon ≈ 56px (pt-14). Icon h-9 (36px) → bottom ≈ 92px. */}
+      {/* Popover anchored under the filter icon in the status row. */}
       <motion.div
         onClick={e => e.stopPropagation()}
-        className="absolute right-4 top-[96px] w-[280px] origin-top-right rounded-2xl bg-card overflow-hidden"
+        className="absolute right-4 top-[340px] w-[280px] origin-top-right rounded-2xl bg-card overflow-hidden"
         style={{
           boxShadow:
             '0 0 0 1px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.12)',
@@ -334,7 +332,7 @@ function FilterPopover({
       >
         {/* Little arrow pointer */}
         <div
-          className="absolute -top-1.5 right-5 h-3 w-3 rotate-45 bg-card"
+          className="absolute -top-1.5 right-3 h-3 w-3 rotate-45 bg-card"
           style={{ boxShadow: '-1px -1px 0 0 rgba(0,0,0,0.04)' }}
         />
 
