@@ -151,26 +151,39 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Status filter */}
-        <div className={`${activeFilterCount > 0 ? 'mt-3' : 'mt-6'} flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide`}>
-          {filters.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-medium transition-all ${
-                filter === f.key
-                  ? "bg-foreground text-background shadow-sm"
-                  : "bg-secondary text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {f.label}
-              {f.count > 0 && (
-                <span className={`ml-1 text-[11px] ${filter === f.key ? "text-background/60" : "text-muted-foreground/60"}`}>
-                  {f.count}
-                </span>
-              )}
-            </button>
-          ))}
+        {/* Status filter + filter button */}
+        <div className={`${activeFilterCount > 0 ? 'mt-3' : 'mt-6'} flex items-center gap-2`}>
+          <div className="flex-1 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {filters.map((f) => (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-medium transition-all ${
+                  filter === f.key
+                    ? "bg-foreground text-background shadow-sm"
+                    : "bg-secondary text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {f.label}
+                {f.count > 0 && (
+                  <span className={`ml-1 text-[11px] ${filter === f.key ? "text-background/60" : "text-muted-foreground/60"}`}>
+                    {f.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setShowFilterSheet(true)}
+            className="relative shrink-0 h-9 w-9 flex items-center justify-center rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <SlidersHorizontal size={15} strokeWidth={1.8} />
+            {activeFilterCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold leading-none">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
         </div>
 
         {/* Asset grid / list / sticker */}
