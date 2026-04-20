@@ -68,28 +68,15 @@ export default function Dashboard() {
           }}
         />
 
-        <div className="relative px-6 pt-14 pb-5">
+        <div className="relative px-6 pt-7 pb-4">
           <div className="flex items-center justify-between mb-0.5">
             <div>
               <h1 className="text-[28px] font-bold tracking-tight text-primary-foreground leading-tight">有数</h1>
               <p className="text-[13px] text-primary-foreground/70 mt-0.5">长期主义，理性消费</p>
             </div>
-            <div className="flex items-center gap-2">
-              <button className="h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10">
-                <Search size={16} strokeWidth={1.8} className="text-primary-foreground" />
-              </button>
-              <button
-                onClick={() => setShowFilterSheet(true)}
-                className="relative h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10"
-              >
-                <SlidersHorizontal size={16} strokeWidth={1.8} className="text-primary-foreground" />
-                {activeFilterCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 flex items-center justify-center rounded-full bg-primary-foreground text-primary text-[10px] font-bold leading-none">
-                    {activeFilterCount}
-                  </span>
-                )}
-              </button>
-            </div>
+            <button className="h-9 w-9 flex items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur-md border border-primary-foreground/10">
+              <Search size={16} strokeWidth={1.8} className="text-primary-foreground" />
+            </button>
           </div>
         </div>
 
