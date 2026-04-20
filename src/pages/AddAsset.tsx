@@ -312,7 +312,7 @@ export default function AddAsset() {
                 setPrice(cleaned);
               }}
               placeholder="0.00"
-              className="flex-1 text-right text-[14px] text-foreground font-medium placeholder:text-muted-foreground/30 bg-transparent outline-none"
+              className="flex-1 text-right text-[14px] text-foreground font-medium placeholder:text-muted-foreground/30 bg-transparent outline-none [appearance:none]"
             />
           </div>
         </div>
