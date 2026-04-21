@@ -159,6 +159,8 @@ export default function AssetDetail() {
           </ResponsiveContainer>
         </motion.div>
 
+        <AIInsights asset={asset} />
+
         <motion.div
           className="rounded-[18px] bg-background divide-y divide-border/60 overflow-hidden"
           style={{
