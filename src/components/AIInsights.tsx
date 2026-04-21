@@ -24,17 +24,18 @@ export default function AIInsights({ asset }: AIInsightsProps) {
   const daily = getDailyCost(asset.price, asset.purchaseDate);
   const { pill, copy } = generateSmartCopy(asset.name, asset.category, asset.price, days, currencySymbol);
 
-  // Income-based philosophical insight
+  // Income-based consumption ratio copy
   let incomeCopy = '';
   if (dailyIncome > 0) {
-    const minutes = Math.round((daily / dailyIncome) * 8 * 60); // 8-hour workday
-    if (minutes >= 60) {
-      const hours = (minutes / 60).toFixed(1);
-      incomeCopy = `它每日消耗你约 ${hours} 小时的劳动成果，它为你创造的价值是否对等？`;
-    } else if (minutes >= 5) {
-      incomeCopy = `它每日消耗你约 ${minutes} 分钟的劳动成果，它为你创造的价值是否对等？`;
+    const ratio = (daily / dailyIncome) * 100;
+    if (ratio < 5) {
+      incomeCopy = `仅占日收入的 ${ratio.toFixed(1)}%，几乎无财务负担。`;
+    } else if (ratio < 15) {
+      incomeCopy = `约占日收入的 ${ratio.toFixed(1)}%，处于良性平衡状态。`;
+    } else if (ratio < 25) {
+      incomeCopy = `已占日收入的 ${ratio.toFixed(1)}%，建议审视现有利用率。`;
     } else {
-      incomeCopy = `它几乎不占用你的劳动时间，安心持有`;
+      incomeCopy = `已达日收入的 ${ratio.toFixed(1)}%，建议保持理性消费。`;
     }
   }
 
