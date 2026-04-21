@@ -219,6 +219,67 @@ export default function SettingsPage() {
         />
       </div>
 
+      {/* 收入设置 */}
+      <SectionTitle>收入设置</SectionTitle>
+      <div className="mx-4 rounded-[18px] bg-card overflow-hidden" style={cardStyle}>
+        <div className="px-4 py-3.5">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg text-base bg-green-50 dark:bg-green-950/30">💰</span>
+            <span className="flex-1 text-[14px] font-medium text-foreground">月收入</span>
+            {settings.monthlyIncome > 0 && !editingIncome && (
+              <button onClick={() => setShowIncome(!showIncome)} className="text-muted-foreground">
+                {showIncome ? <Eye size={16} /> : <EyeOff size={16} />}
+              </button>
+            )}
+          </div>
+          {editingIncome ? (
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-[14px] text-muted-foreground">{currencySymbol}</span>
+              <input
+                type="number"
+                value={incomeInput}
+                onChange={e => setIncomeInput(e.target.value)}
+                placeholder="输入月收入"
+                className="flex-1 bg-secondary rounded-lg px-3 py-2 text-[14px] text-foreground outline-none"
+                autoFocus
+              />
+              <button
+                onClick={() => {
+                  const val = Math.max(0, Number(incomeInput) || 0);
+                  updateSettings({ monthlyIncome: val });
+                  setEditingIncome(false);
+                }}
+                className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-[13px] font-medium"
+              >
+                保存
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => { setIncomeInput(settings.monthlyIncome > 0 ? String(settings.monthlyIncome) : ''); setEditingIncome(true); }}
+              className="w-full text-left"
+            >
+              {settings.monthlyIncome > 0 ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-[14px] text-foreground font-medium">
+                    {showIncome ? `${currencySymbol}${settings.monthlyIncome.toLocaleString()}` : `${currencySymbol}${'*'.repeat(6)}`}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    (日均 {showIncome ? `${currencySymbol}${(settings.monthlyIncome / 30).toFixed(0)}` : '***'})
+                  </span>
+                  <ChevronRight size={14} className="ml-auto text-muted-foreground/40" />
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <span className="text-[13px] text-muted-foreground">点击设置月收入，解锁消费占比分析</span>
+                  <ChevronRight size={14} className="ml-auto text-muted-foreground/40" />
+                </div>
+              )}
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* 显示与外观 */}
       <SectionTitle>显示与外观</SectionTitle>
       <div className="mx-4 rounded-[18px] bg-card divide-y divide-border/60 overflow-hidden" style={cardStyle}>
