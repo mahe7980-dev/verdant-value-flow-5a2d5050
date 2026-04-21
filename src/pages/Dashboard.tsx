@@ -339,9 +339,7 @@ function DailyCostBlock({
             className="overflow-hidden"
           >
             <p className="text-[11px] text-muted-foreground/80 mt-2 px-1 leading-relaxed">
-              {ratio >= 20
-                ? `🧘 当前持物成本约占日收入的 ${ratio.toFixed(1)}%，建议保持理性消费`
-                : `当前持物成本约占日收入的 ${ratio.toFixed(1)}%，请理性增添`}
+              {ratioCopy}
             </p>
           </motion.div>
         )}
