@@ -90,25 +90,61 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <div className="mb-3.5">
-              <p className="text-[11px] text-muted-foreground mb-1 tracking-wider uppercase font-medium">总资产价值</p>
+            <div className="mb-3">
+              <p className="text-[11px] text-muted-foreground mb-1 tracking-wider uppercase font-medium">我的资产</p>
               <p className="text-[28px] font-bold text-foreground leading-none tracking-tight">
                 {formatPrice(total)}
               </p>
             </div>
 
-            <div className="flex items-center gap-2 mb-3.5 bg-accent/60 rounded-xl px-3 py-2">
-              <div className="h-7 w-7 rounded-lg gradient-green flex items-center justify-center">
-                <TrendingDown size={13} className="text-primary-foreground" strokeWidth={2.5} />
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex-1 flex items-center gap-2 bg-accent/60 rounded-xl px-3 py-2">
+                <div className="h-7 w-7 rounded-lg gradient-green flex items-center justify-center">
+                  <TrendingDown size={13} className="text-primary-foreground" strokeWidth={2.5} />
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground leading-tight">日均成本</p>
+                  <p className="text-[15px] font-bold text-foreground leading-tight">
+                    {`${currencySymbol}${dailyCost.toFixed(settings.decimalPlaces)}`}
+                    <span className="text-[11px] font-normal text-muted-foreground">/天</span>
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-[10px] text-muted-foreground leading-tight">日均成本</p>
-                <p className="text-[15px] font-bold text-foreground leading-tight">
-                  {`${currencySymbol}${dailyCost.toFixed(settings.decimalPlaces)}`}
-                  <span className="text-[11px] font-normal text-muted-foreground">/天</span>
-                </p>
-              </div>
+              {dailyIncome > 0 && (
+                <div className="flex-1 flex items-center gap-2 bg-accent/60 rounded-xl px-3 py-2">
+                  <div className="h-7 w-7 rounded-lg bg-blue-500 flex items-center justify-center">
+                    <TrendingDown size={13} className="text-primary-foreground rotate-180" strokeWidth={2.5} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground leading-tight">日均收入</p>
+                    <p className="text-[15px] font-bold text-foreground leading-tight">
+                      {`${currencySymbol}${dailyIncome.toFixed(settings.decimalPlaces)}`}
+                      <span className="text-[11px] font-normal text-muted-foreground">/天</span>
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
+
+            {dailyIncome > 0 && (() => {
+              const ratio = (dailyCost / dailyIncome) * 100;
+              const ratioColor = ratio < 10 ? 'bg-emerald-500' : ratio < 20 ? 'bg-amber-500' : 'bg-red-500';
+              const ratioTextColor = ratio < 10 ? 'text-emerald-600' : ratio < 20 ? 'text-amber-600' : 'text-red-600';
+              return (
+                <div className="mb-3">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[11px] text-muted-foreground">消费占比</span>
+                    <span className={`text-[11px] font-semibold ${ratioTextColor}`}>{ratio.toFixed(1)}%</span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+                    <div className={`h-full rounded-full transition-all ${ratioColor}`} style={{ width: `${Math.min(ratio, 100)}%` }} />
+                  </div>
+                  {ratio >= 20 && (
+                    <p className="text-[10px] text-red-500 mt-1.5">近期消费欲望过重，请保持理性 🧘</p>
+                  )}
+                </div>
+              );
+            })()}
 
             <div className="space-y-2">
               <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden flex">
