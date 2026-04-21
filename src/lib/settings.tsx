@@ -11,6 +11,7 @@ export interface AppSettings {
   decimalPlaces: number; // 0-3
   theme: ThemeMode;
   viewMode: ViewMode;
+  monthlyIncome: number; // 0 means not set
 }
 
 const CURRENCY_MAP: Record<CurrencyCode, { symbol: string; label: string }> = {
@@ -39,6 +40,7 @@ const defaultSettings: AppSettings = {
   decimalPlaces: 1,
   theme: 'light',
   viewMode: 'card',
+  monthlyIncome: 0,
 };
 
 interface SettingsContextType {
@@ -49,6 +51,7 @@ interface SettingsContextType {
   formatDuration: (days: number) => string;
   durationSuffix: string;
   currencySymbol: string;
+  dailyIncome: number; // monthlyIncome / 30, 0 if not set
 }
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
@@ -102,9 +105,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   // Cost suffix always per-day; only the duration text follows the unit setting.
   const durationSuffix = '/天';
+  const dailyIncome = settings.monthlyIncome > 0 ? settings.monthlyIncome / 30 : 0;
 
   return (
-    <SettingsContext.Provider value={{ settings, updateSettings, formatPrice, formatDailyCost, formatDuration, durationSuffix, currencySymbol }}>
+    <SettingsContext.Provider value={{ settings, updateSettings, formatPrice, formatDailyCost, formatDuration, durationSuffix, currencySymbol, dailyIncome }}>
       {children}
     </SettingsContext.Provider>
   );
