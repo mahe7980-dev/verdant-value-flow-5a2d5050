@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { getAssets, getDaysUsed, getDailyCost, getDepreciationCurve, deleteAsset, getAssetEmoji } from '@/lib/assets';
 import { useSettings } from '@/lib/settings';
+import AIInsights from '@/components/AIInsights';
 
 const fadeUp = {
   initial: { opacity: 0, y: 16 },
@@ -157,6 +158,8 @@ export default function AssetDetail() {
             </AreaChart>
           </ResponsiveContainer>
         </motion.div>
+
+        <AIInsights asset={asset} />
 
         <motion.div
           className="rounded-[18px] bg-background divide-y divide-border/60 overflow-hidden"
