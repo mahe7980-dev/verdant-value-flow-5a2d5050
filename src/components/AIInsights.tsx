@@ -24,12 +24,18 @@ export default function AIInsights({ asset }: AIInsightsProps) {
   const daily = getDailyCost(asset.price, asset.purchaseDate);
   const { pill, copy } = generateSmartCopy(asset.name, asset.category, asset.price, days, currencySymbol);
 
-  // Income-based insight
+  // Income-based philosophical insight
   let incomeCopy = '';
   if (dailyIncome > 0) {
-    const pct = (daily / dailyIncome) * 100;
     const minutes = Math.round((daily / dailyIncome) * 8 * 60); // 8-hour workday
-    incomeCopy = `该物品每天消耗你收入的 ${pct.toFixed(1)}%，相当于每天为它工作 ${minutes} 分钟`;
+    if (minutes >= 60) {
+      const hours = (minutes / 60).toFixed(1);
+      incomeCopy = `它每日消耗你约 ${hours} 小时的劳动成果，它为你创造的价值是否对等？`;
+    } else if (minutes >= 5) {
+      incomeCopy = `它每日消耗你约 ${minutes} 分钟的劳动成果，它为你创造的价值是否对等？`;
+    } else {
+      incomeCopy = `它几乎不占用你的劳动时间，安心持有`;
+    }
   }
 
   return (
