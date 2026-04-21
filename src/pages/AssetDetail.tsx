@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { getAssets, getDaysUsed, getDailyCost, getDepreciationCurve, deleteAsset, getAssetEmoji } from '@/lib/assets';
 import { useSettings } from '@/lib/settings';
+import AIInsights from '@/components/AIInsights';
 
 const fadeUp = {
   initial: { opacity: 0, y: 16 },
