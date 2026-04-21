@@ -293,10 +293,23 @@ function DailyCostBlock({
 }) {
   const [expanded, setExpanded] = useState(false);
   const ratio = dailyIncome > 0 ? (dailyCost / dailyIncome) * 100 : 0;
-  const showWarning = dailyIncome > 0 && ratio >= 20;
+
+  // Determine consumption level copy
+  const ratioCopy = (() => {
+    if (dailyIncome <= 0) return '';
+    if (ratio < 5) {
+      return `当前持物成本仅占日收入的 ${ratio.toFixed(1)}%，几乎无财务负担。`;
+    } else if (ratio < 15) {
+      return `当前持物成本约占日收入的 ${ratio.toFixed(1)}%，处于良性平衡状态。`;
+    } else if (ratio < 25) {
+      return `当前持物成本已占日收入的 ${ratio.toFixed(1)}%，建议先审视现有利用率。`;
+    } else {
+      return `当前持物成本已达日收入的 ${ratio.toFixed(1)}%，建议近期保持理性消费。`;
+    }
+  })();
 
   // Auto-expand if ratio exceeds threshold
-  const shouldShow = expanded || showWarning;
+  const shouldShow = expanded || ratio >= 20;
 
   return (
     <div className="mb-3">
@@ -326,9 +339,7 @@ function DailyCostBlock({
             className="overflow-hidden"
           >
             <p className="text-[11px] text-muted-foreground/80 mt-2 px-1 leading-relaxed">
-              {ratio >= 20
-                ? `🧘 当前持物成本约占日收入的 ${ratio.toFixed(1)}%，建议保持理性消费`
-                : `当前持物成本约占日收入的 ${ratio.toFixed(1)}%，请理性增添`}
+              {ratioCopy}
             </p>
           </motion.div>
         )}
