@@ -1,15 +1,10 @@
 /**
  * Category benchmarks for AI insight calculations.
- * lifespanYears: [min, max] expected useful life in years
- * residualRates: { year: rate } — estimated residual value as % of purchase price
- * avgDailyRental: rough average daily rental cost benchmark (CNY per 1000 CNY of price)
  */
 
 export interface CategoryBenchmark {
   lifespanYears: [number, number];
-  /** Residual value curve: key = year, value = fraction of original price retained */
   residualRates: Record<number, number>;
-  /** Average daily rental rate per 1000 CNY of original price */
   avgDailyRentalPer1k: number;
 }
 
@@ -60,69 +55,159 @@ export function getBenchmark(category: string): CategoryBenchmark {
   return CATEGORY_BENCHMARKS[category] || CATEGORY_BENCHMARKS['其他'];
 }
 
-/** Get the "sweet spot" — the day when daily cost curve flattens most (marginal decrease < threshold) */
 export function getSweetSpotDays(price: number, benchmark: CategoryBenchmark): number {
   const avgLifespanDays = ((benchmark.lifespanYears[0] + benchmark.lifespanYears[1]) / 2) * 365;
-  // Sweet spot: where daily cost drop per additional day becomes < 0.5% of current daily cost
-  // d/dd (price/d) = -price/d² → marginal gain = price/d² 
-  // When price/d² < 0.005 * (price/d) → 1/d < 0.005 → d > 200
-  // More practically: ~60-70% of avg lifespan is the sweet spot
   const sweetSpot = Math.round(avgLifespanDays * 0.65);
-  return Math.max(180, sweetSpot); // at least 6 months
+  return Math.max(180, sweetSpot);
 }
 
-/** Calculate lifespan progress as a percentage */
 export function getLifespanProgress(daysUsed: number, benchmark: CategoryBenchmark): number {
   const avgLifespanDays = ((benchmark.lifespanYears[0] + benchmark.lifespanYears[1]) / 2) * 365;
   return Math.min(100, (daysUsed / avgLifespanDays) * 100);
 }
 
-/** Target daily cost based on category rental benchmark */
 export function getTargetDailyCost(price: number, benchmark: CategoryBenchmark): number {
   return (price / 1000) * benchmark.avgDailyRentalPer1k;
 }
 
-/** Days needed to reach target daily cost */
 export function getDaysToTarget(price: number, benchmark: CategoryBenchmark): number {
   const target = getTargetDailyCost(price, benchmark);
   if (target <= 0) return 9999;
   return Math.ceil(price / target);
 }
 
-/** Has the asset reached the value milestone? */
 export function hasReachedMilestone(price: number, daysUsed: number, benchmark: CategoryBenchmark): boolean {
   const targetDaily = getTargetDailyCost(price, benchmark);
   const currentDaily = price / daysUsed;
   return currentDaily <= targetDaily;
 }
 
-/** Generate smart AI copy */
-export function generateInsightCopy(
+/** Determine the asset's scenario mode */
+export type InsightMode = 'rookie' | 'veteran' | 'lowcost' | 'standard';
+
+export function getInsightMode(price: number, daysUsed: number, benchmark: CategoryBenchmark): InsightMode {
+  const dailyCost = price / daysUsed;
+  // Low-cost: daily cost < 1 CNY regardless of age
+  if (dailyCost < 1) return 'lowcost';
+  // Rookie: < 90 days
+  if (daysUsed < 90) return 'rookie';
+  // Veteran: > 2 years
+  if (daysUsed > 730) return 'veteran';
+  return 'standard';
+}
+
+/** Generate contextual smart copy based on scenario mode */
+export function generateSmartCopy(
   name: string,
   category: string,
   price: number,
   daysUsed: number,
   currencySymbol: string,
-): string {
+): { mode: InsightMode; pill: string; copy: string } {
   const benchmark = getBenchmark(category);
   const dailyCost = price / daysUsed;
   const targetDaily = getTargetDailyCost(price, benchmark);
   const sweetSpot = getSweetSpotDays(price, benchmark);
   const reached = hasReachedMilestone(price, daysUsed, benchmark);
-  const progress = getLifespanProgress(daysUsed, benchmark);
+  const mode = getInsightMode(price, daysUsed, benchmark);
+  const avgLifespan = (benchmark.lifespanYears[0] + benchmark.lifespanYears[1]) / 2;
 
-  if (reached) {
-    return `🎉 你的${name}已使用 ${daysUsed} 天，日均成本 ${currencySymbol}${dailyCost.toFixed(1)} 已低于类目基准 ${currencySymbol}${targetDaily.toFixed(1)}，非常划算！继续持有让它更超值。`;
+  switch (mode) {
+    case 'rookie': {
+      const daysToTarget = Math.max(0, getDaysToTarget(price, benchmark) - daysUsed);
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + daysToTarget);
+      const dateStr = `${targetDate.getMonth() + 1}/${targetDate.getDate()}`;
+      return {
+        mode,
+        pill: '新秀期',
+        copy: `新成员还在"高溢价期"，坚持使用到 ${dateStr} 后，日均成本将降至 ${currencySymbol}${targetDaily.toFixed(1)}/天`,
+      };
+    }
+    case 'veteran': {
+      const years = (daysUsed / 365).toFixed(1);
+      const lifespanMax = benchmark.lifespanYears[1];
+      return {
+        mode,
+        pill: '极高性价比',
+        copy: reached
+          ? `已服役 ${years} 年，当前每一天都是"纯赚"，建议持有至 ${lifespanMax} 年寿命极限再退役`
+          : `已服役 ${years} 年，日均 ${currencySymbol}${dailyCost.toFixed(1)} 正趋于极致性价比`,
+      };
+    }
+    case 'lowcost': {
+      return {
+        mode,
+        pill: '无感消耗',
+        copy: `平均每天仅需 ${currencySymbol}${dailyCost.toFixed(2)}，几乎无感，不必过于关注成本波动`,
+      };
+    }
+    default: {
+      if (reached) {
+        return {
+          mode,
+          pill: '已回本',
+          copy: `已过价值回归点，日均 ${currencySymbol}${dailyCost.toFixed(1)} 低于类目基准，当前每一天都是"纯赚"`,
+        };
+      }
+      const daysLeft = Math.max(0, getDaysToTarget(price, benchmark) - daysUsed);
+      const sweetSpotLeft = Math.max(0, sweetSpot - daysUsed);
+      if (sweetSpotLeft <= 0) {
+        return {
+          mode,
+          pill: '最优区间',
+          copy: `已进入最佳持有区间，日均成本 ${currencySymbol}${dailyCost.toFixed(1)} 趋于平稳，继续持有收益最大`,
+        };
+      }
+      return {
+        mode,
+        pill: '成长中',
+        copy: `再坚持约 ${daysLeft} 天，日均成本可降至类目基准 ${currencySymbol}${targetDaily.toFixed(1)}/天`,
+      };
+    }
+  }
+}
+
+/** Get chart annotation data for the depreciation curve */
+export interface ChartAnnotation {
+  day: number;
+  cost: number;
+  label: string;
+  type: 'target' | 'sweetspot' | 'current';
+}
+
+export function getChartAnnotations(
+  price: number,
+  daysUsed: number,
+  category: string,
+  currencySymbol: string,
+): ChartAnnotation[] {
+  const benchmark = getBenchmark(category);
+  const targetDaily = getTargetDailyCost(price, benchmark);
+  const daysToTarget = getDaysToTarget(price, benchmark);
+  const sweetSpot = getSweetSpotDays(price, benchmark);
+  const reached = hasReachedMilestone(price, daysUsed, benchmark);
+  const annotations: ChartAnnotation[] = [];
+
+  // Sweet spot annotation (only if not yet reached)
+  if (daysUsed < sweetSpot) {
+    annotations.push({
+      day: sweetSpot,
+      cost: +(price / sweetSpot).toFixed(1),
+      label: `日均稳定区 ${currencySymbol}${(price / sweetSpot).toFixed(0)}/天`,
+      type: 'sweetspot',
+    });
   }
 
-  if (progress > 80) {
-    return `⚡ ${name}已进入使用后期（${progress.toFixed(0)}% 寿命），日均 ${currencySymbol}${dailyCost.toFixed(1)}。如有换新计划可以开始关注了。`;
+  // Target (value milestone) annotation
+  if (!reached && daysToTarget > daysUsed) {
+    annotations.push({
+      day: daysToTarget,
+      cost: +targetDaily.toFixed(1),
+      label: `回本点 ${currencySymbol}${targetDaily.toFixed(0)}/天`,
+      type: 'target',
+    });
   }
 
-  if (daysUsed > sweetSpot * 0.8) {
-    return `✨ ${name}即将进入最佳持有区间，日均成本 ${currencySymbol}${dailyCost.toFixed(1)} 正趋于平稳，继续持有到 ${Math.ceil(sweetSpot / 365 * 10) / 10} 年最划算。`;
-  }
-
-  const daysLeft = Math.max(0, Math.ceil(price / targetDaily) - daysUsed);
-  return `📊 ${name}已使用 ${daysUsed} 天，日均 ${currencySymbol}${dailyCost.toFixed(1)}。再持有约 ${daysLeft} 天可达到类目基准成本 ${currencySymbol}${targetDaily.toFixed(1)}/天。`;
+  return annotations;
 }
