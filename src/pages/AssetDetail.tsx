@@ -239,14 +239,11 @@ export default function AssetDetail() {
   );
 }
 
-function InfoRow({ icon, iconBg, label, value }: { icon: React.ReactNode; iconBg: string; label: string; value: string }) {
+function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3.5">
-      <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${iconBg}`}>
-        {icon}
-      </span>
-      <span className="flex-1 text-[14px] text-muted-foreground">{label}</span>
-      <span className="text-[14px] font-medium text-foreground">{value}</span>
+    <div className="flex items-center justify-between py-2">
+      <span className="text-[13px] text-muted-foreground">{label}</span>
+      <span className="text-[13px] font-medium text-foreground">{value}</span>
     </div>
   );
 }
