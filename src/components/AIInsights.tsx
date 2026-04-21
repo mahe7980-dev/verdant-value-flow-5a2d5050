@@ -3,7 +3,7 @@ import { Sparkles } from 'lucide-react';
 import { generateSmartCopy } from '@/lib/category-benchmarks';
 import { useSettings } from '@/lib/settings';
 import type { Asset } from '@/lib/assets';
-import { getDaysUsed } from '@/lib/assets';
+import { getDaysUsed, getDailyCost } from '@/lib/assets';
 
 interface AIInsightsProps {
   asset: Asset;
@@ -19,9 +19,18 @@ const pillColors: Record<string, string> = {
 };
 
 export default function AIInsights({ asset }: AIInsightsProps) {
-  const { currencySymbol } = useSettings();
+  const { currencySymbol, dailyIncome } = useSettings();
   const days = getDaysUsed(asset.purchaseDate);
+  const daily = getDailyCost(asset.price, asset.purchaseDate);
   const { pill, copy } = generateSmartCopy(asset.name, asset.category, asset.price, days, currencySymbol);
+
+  // Income-based insight
+  let incomeCopy = '';
+  if (dailyIncome > 0) {
+    const pct = (daily / dailyIncome) * 100;
+    const minutes = Math.round((daily / dailyIncome) * 8 * 60); // 8-hour workday
+    incomeCopy = `该物品每天消耗你收入的 ${pct.toFixed(1)}%，相当于每天为它工作 ${minutes} 分钟`;
+  }
 
   return (
     <motion.div
@@ -36,6 +45,9 @@ export default function AIInsights({ asset }: AIInsightsProps) {
           {pill}
         </span>
         <span className="text-[12px] text-muted-foreground leading-relaxed">{copy}</span>
+        {incomeCopy && (
+          <span className="text-[12px] text-muted-foreground leading-relaxed">· {incomeCopy}</span>
+        )}
       </div>
     </motion.div>
   );
