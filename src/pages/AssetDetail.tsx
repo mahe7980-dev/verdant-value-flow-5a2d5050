@@ -2,9 +2,10 @@ import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Pencil, Trash2, Calendar, Tag, DollarSign } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceDot } from 'recharts';
 import { getAssets, getDaysUsed, getDailyCost, getDepreciationCurve, deleteAsset, getAssetEmoji } from '@/lib/assets';
 import { useSettings } from '@/lib/settings';
+import { getChartAnnotations } from '@/lib/category-benchmarks';
 import AIInsights from '@/components/AIInsights';
 
 const fadeUp = {
@@ -23,8 +24,10 @@ export default function AssetDetail() {
 
   const days = getDaysUsed(asset.purchaseDate);
   const daily = getDailyCost(asset.price, asset.purchaseDate);
-  const curve = getDepreciationCurve(asset.price, Math.max(days, 365));
+  const maxDays = Math.max(days * 1.3, 365);
+  const curve = getDepreciationCurve(asset.price, Math.round(maxDays));
   const emoji = asset.emoji || getAssetEmoji(asset.name, asset.category);
+  const annotations = getChartAnnotations(asset.price, days, asset.category, currencySymbol);
 
   const handleDelete = () => {
     if (confirm('确定要删除这个资产吗？')) {
@@ -38,6 +41,11 @@ export default function AssetDetail() {
     month: 'long',
     day: 'numeric',
   });
+
+  // Find closest curve point to current day for the "current" dot
+  const currentPoint = curve.reduce((prev, curr) =>
+    Math.abs(curr.day - days) < Math.abs(prev.day - days) ? curr : prev
+  );
 
   return (
     <motion.div
@@ -98,6 +106,7 @@ export default function AssetDetail() {
       </div>
 
       <div className="px-5 space-y-3">
+        {/* Chart with integrated annotations */}
         <motion.div
           className="rounded-[18px] bg-background p-5"
           style={{
@@ -107,7 +116,7 @@ export default function AssetDetail() {
           transition={{ delay: 0.15, duration: 0.35 }}
         >
           <p className="text-[13px] font-semibold text-foreground mb-4">成本趋势</p>
-          <ResponsiveContainer width="100%" height={180}>
+          <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={curve}>
               <defs>
                 <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
@@ -155,11 +164,51 @@ export default function AssetDetail() {
                 dot={false}
                 activeDot={{ r: 4, fill: 'hsl(145,45%,52%)', stroke: '#fff', strokeWidth: 2 }}
               />
+
+              {/* Current position dot */}
+              <ReferenceDot
+                x={currentPoint.day}
+                y={currentPoint.cost}
+                r={5}
+                fill="hsl(145,45%,52%)"
+                stroke="#fff"
+                strokeWidth={2}
+              />
+
+              {/* Annotation reference lines & dots */}
+              {annotations.map((a, i) => (
+                <ReferenceLine
+                  key={`line-${i}`}
+                  x={a.day}
+                  stroke="hsl(0,0%,75%)"
+                  strokeDasharray="4 4"
+                  strokeWidth={1}
+                  label={{
+                    value: a.label,
+                    position: 'top',
+                    fontSize: 9,
+                    fill: 'hsl(0,0%,50%)',
+                    offset: 8,
+                  }}
+                />
+              ))}
+              {annotations.map((a, i) => (
+                <ReferenceDot
+                  key={`dot-${i}`}
+                  x={a.day}
+                  y={a.cost}
+                  r={3.5}
+                  fill={a.type === 'target' ? 'hsl(25,95%,53%)' : 'hsl(210,80%,55%)'}
+                  stroke="#fff"
+                  strokeWidth={1.5}
+                />
+              ))}
             </AreaChart>
           </ResponsiveContainer>
-        </motion.div>
 
-        <AIInsights asset={asset} />
+          {/* Inline AI insight — 1-2 lines */}
+          <AIInsights asset={asset} />
+        </motion.div>
 
         <motion.div
           className="rounded-[18px] bg-background divide-y divide-border/60 overflow-hidden"
