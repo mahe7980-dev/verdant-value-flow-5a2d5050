@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronRight, Sun, Moon, Check } from 'lucide-react';
+import { ChevronRight, Sun, Moon, Check, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings, CURRENCY_MAP, DURATION_MAP, type CurrencyCode, type DurationUnit, type ViewMode } from '@/lib/settings';
 
@@ -158,6 +158,10 @@ export default function SettingsPage() {
   const { settings, updateSettings } = useSettings();
 
   const [picker, setPicker] = useState<'currency' | 'duration' | 'decimal' | 'viewMode' | null>(null);
+  const [showIncome, setShowIncome] = useState(false);
+  const [editingIncome, setEditingIncome] = useState(false);
+  const [incomeInput, setIncomeInput] = useState('');
+  const { currencySymbol } = useSettings();
 
   // Hide global TabBar while a picker sheet is open
   useEffect(() => {
