@@ -17,7 +17,7 @@ export default function Dashboard() {
   const [ownerFilter, setOwnerFilter] = useState<OwnerFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const [showFilterSheet, setShowFilterSheet] = useState(false);
-  const { formatPrice, formatDailyCost, durationSuffix, currencySymbol, settings } = useSettings();
+  const { formatPrice, formatDailyCost, durationSuffix, currencySymbol, settings, dailyIncome } = useSettings();
   const viewMode = settings.viewMode;
 
   const total = getTotalValue(assets);
