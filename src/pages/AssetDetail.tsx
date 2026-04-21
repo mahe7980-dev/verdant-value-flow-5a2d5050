@@ -211,31 +211,17 @@ export default function AssetDetail() {
         </motion.div>
 
         <motion.div
-          className="rounded-[18px] bg-background divide-y divide-border/60 overflow-hidden"
+          className="rounded-[18px] bg-background px-4 py-3"
           style={{
             boxShadow: '0 0 0 1px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.03), 0 4px 14px rgba(0,0,0,0.04)',
           }}
           {...fadeUp}
           transition={{ delay: 0.25, duration: 0.35 }}
         >
-          <InfoRow
-            icon={<DollarSign size={15} className="text-primary" />}
-            iconBg="bg-accent"
-            label="购入价格"
-            value={formatPrice(asset.price)}
-          />
-          <InfoRow
-            icon={<Tag size={15} className="text-primary" />}
-            iconBg="bg-accent"
-            label="类别"
-            value={asset.category}
-          />
-          <InfoRow
-            icon={<Calendar size={15} className="text-primary" />}
-            iconBg="bg-accent"
-            label="购买日期"
-            value={purchaseDateFormatted}
-          />
+          <InfoRow label="购入价格" value={formatPrice(asset.price)} />
+          <InfoRow label="购买日期" value={purchaseDateFormatted} />
+          <InfoRow label="类别" value={asset.category} />
+          <InfoRow label="归属" value={asset.owner || '未设置'} />
         </motion.div>
 
         <motion.button
@@ -253,14 +239,11 @@ export default function AssetDetail() {
   );
 }
 
-function InfoRow({ icon, iconBg, label, value }: { icon: React.ReactNode; iconBg: string; label: string; value: string }) {
+function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3.5">
-      <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${iconBg}`}>
-        {icon}
-      </span>
-      <span className="flex-1 text-[14px] text-muted-foreground">{label}</span>
-      <span className="text-[14px] font-medium text-foreground">{value}</span>
+    <div className="flex items-center justify-between py-2">
+      <span className="text-[13px] text-muted-foreground">{label}</span>
+      <span className="text-[13px] font-medium text-foreground">{value}</span>
     </div>
   );
 }
